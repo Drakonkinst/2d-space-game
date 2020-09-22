@@ -120,6 +120,16 @@ class Vector {
         }
         return this.scale(magnitude / oldMagnitude);
     }
+    
+    /**
+     * Returns the normalized vector of the current vector. This modifies the
+     * current vector.
+     * 
+     * @returns {Vector} The normalized vector.
+     */
+    normalize() {
+        return this.divide(this.magnitude());
+    }
 
     /**
      * Returns dot product of the current vector with another vector.
