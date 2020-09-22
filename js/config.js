@@ -1,5 +1,8 @@
 const Config = (function() {
     return {
-        isStopped: false
+        isStopped: false,
+        
+        drawVelocity: true,
+        drawAcceleration: true,
     };
 })();
