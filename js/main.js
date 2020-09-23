@@ -81,7 +81,8 @@ function windowResized() {
 
 function setScenario(scene) {
     currentScenario = scene;
-    scene.onStart();
+    scene.onStart();    
+    Input.createCameraFollowOptions();
 }
 
 function cameraFollow(obj) {

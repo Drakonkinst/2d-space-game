@@ -36,6 +36,7 @@ a {
 button {
   border: 1px black;
   margin-bottom: 5px;
+  margin-right: 5px;
   background: #dddddd;
   padding: 5px 10px;
   cursor: pointer;

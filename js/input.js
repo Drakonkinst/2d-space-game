@@ -68,6 +68,21 @@ const Input = (function() {
             }
         },
         
+        createCameraFollowOptions() {
+            $(".camera-follow-options").empty();
+            this.createCameraFollowOption(Vector.of(0, 0), "Origin");
+            
+            for(let body of universe.allBodies) {
+                this.createCameraFollowOption(body, body.name);
+            }
+        },
+        
+        createCameraFollowOption(body, text) {
+            $("<button>").addClass("camera-follow-option").text(text).click(function() {
+                cameraFollow(body);
+            }).appendTo(".camera-follow-options");
+        },
+        
         addOnKey(key, callback) {
             if(typeof key === "string") {
                 key = key.charCodeAt(0);
