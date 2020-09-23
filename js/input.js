@@ -19,10 +19,21 @@ const Input = (function() {
     
     const keyMap = {};
     let numKeyBinds = 0;
+    let dragTarget = null;
     
     return {
         setup() {
             let buttonList = $(".control-buttons");
+            
+            /*let editButton = $("<button>").addClass("edit-button").text("Edit Mode: ON (E)").click(function () {
+                Config.editMode = !Config.editMode;
+                $(this).toggleClass("active");
+                if($(this).hasClass("active")) {
+                    $(this).text("Edit Mode: OFF (E)");
+                } else {
+                    $(this).text("Edit Mode: ON (E)");
+                }
+            }).appendTo(buttonList);*/
             let resetButton = $("<button>").addClass("reset-button").text("Reset (R)").click(function () {
                 setScenario(currentScenario)
             }).appendTo(buttonList);
@@ -46,7 +57,6 @@ const Input = (function() {
             }).appendTo(buttonList);
             
             
-            this.addOnKey("P", function() {
             
             this.addOnKey("O", function() {
                 toggleForceVelocity.click();
@@ -59,6 +69,9 @@ const Input = (function() {
             });
             this.addOnKey("R", function() {
                 resetButton.click();
+            });
+            this.addOnKey("E", function() {
+                editButton.click();
             });
             debug("Registered " + numKeyBinds + " keybinds");
             
@@ -74,8 +87,29 @@ const Input = (function() {
                 togglePaths.addClass("active");
             }
             if(Config.isStopped) {
-                pauseButton.addClass("active");
+                pauseButton.addClass("active").text("Unpause (SPACE)");
             }
+            if(!Config.editMode) {
+                return;
+                editButton.addClass("active").text("Edit Mode: OFF (E)");
+            }
+        },
+        
+        update() {
+            cursor(ARROW);
+            if(Config.editMode) {
+                let mousePos = Input.getMousePos();
+                for(let body of universe.allBodies) {
+                    if(body instanceof Planetoid && body.pointOnPlanetoid(mousePos)) {
+                        cursor(HAND);
+                    }
+                }
+            }
+            
+        },
+
+        createScenarioInput() {
+            
         },
         
         createCameraFollowOptions() {
