@@ -24,18 +24,18 @@ const Input = (function() {
         setup() {
             let buttonList = $(".control-buttons");
             let resetButton = $("<button>").addClass("reset-button").text("Reset (R)").click(function () {
-                currentScenario.onStart();
+                setScenario(currentScenario)
             }).appendTo(buttonList);
-            let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity").text("Toggle Force/Velocity (P)").click(function () {
+            let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity").text("Toggle Force/Velocity (O)").click(function () {
                 Config.drawAcceleration = !Config.drawAcceleration;
                 Config.drawVelocity = !Config.drawVelocity;
                 $(this).toggleClass("active");
             }).appendTo(buttonList);
-            let togglePaths = $("<button>").addClass("toggle-paths").text("Toggle Paths (O)").click(function () {
+            let togglePaths = $("<button>").addClass("toggle-paths").text("Toggle Paths (P)").click(function() {
                 Config.drawPaths = !Config.drawPaths;
                 $(this).toggleClass("active");
             }).appendTo(buttonList);
-            let pauseButton = $("<button>").addClass("pause-button").text("Pause (SPACE)").click(function () {
+            let pauseButton = $("<button>").addClass("pause-button").text("Pause (SPACE)").click(function() {
                 Config.isStopped = !Config.isStopped;
                 $(this).toggleClass("active");
                 if($(this).hasClass("active")) {
@@ -47,12 +47,14 @@ const Input = (function() {
             
             
             this.addOnKey("P", function() {
+            
+            this.addOnKey("O", function() {
                 toggleForceVelocity.click();
             });
             this.addOnKey(SPACE, function() {
                 pauseButton.click();
             });
-            this.addOnKey("O", function() {
+            this.addOnKey("P", function() {
                 togglePaths.click();
             });
             this.addOnKey("R", function() {
