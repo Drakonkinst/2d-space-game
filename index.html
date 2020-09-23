@@ -14,6 +14,16 @@
 </head>
 
 <body>
+    <div class="info">
+        <p>Controls:</p>
+        <li>P: Toggle force and velocity visualization</li>
+        <li>O: Toggle path drawing</li>
+        <li>SPACE: Pause / Unpause</li>
+        <p>Choose Scenario:</p>
+        <button onclick="setScenario(TwoBodyScenario)">2 Body System</button>
+        <button onclick="setScenario(ThreeBodyScenario)">3 Body System</button>
+    </div>
+    
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="js/lib/jquery-3.4.1.min.js"><\/script>')</script>

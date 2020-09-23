@@ -12,3 +12,8 @@ body {
   /* This centers our sketch vertically. */
   align-items: center;
 }
+
+.info {
+  width: 300px;
+  display: relative
+}
