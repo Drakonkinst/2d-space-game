@@ -131,11 +131,10 @@ let SolarSystem = new Scenario(
 );
 
 function setup() {
+    recalcluateCenter();
     setScenario(TwoBodyScenarioA);
-    cameraFollow(universe.allBodies[0]);
     canvas = createCanvas();
     resetCanvas();
-    recalcluateCenter();
     
     Input.setup();
     console.log("Setup complete!");
