@@ -49,24 +49,38 @@ const Graphics = (function() {
     
     const paths = {};
     let pathCounter = Config.recordPathInterval;
+    let zoom = 1;
     
     return {
         toRadians,
         toDegrees,
+
+        getZoom() {
+            return zoom;
+        },
+
+        setZoom(z) {
+            zoom = z;
+        },
+
+        getCameraAnchor(centerPoint) {
+            return Vector.of(-centerPoint.x + width / (2 * zoom), -centerPoint.y + height / (2 * zoom));
+        },
         
         draw() {
             clear();
             reset();
             background(0);
             
+            scale(zoom);
+
             let translateOffset;
             if(cameraTarget.position) {
-                // given center point, must find anchor
-                translateOffset = getCameraAnchor(cameraTarget.position);
+                translateOffset = Graphics.getCameraAnchor(cameraTarget.position);
             } else {
-                // no need to find anchor
-                translateOffset = cameraTarget;
+                translateOffset = Graphics.getCameraAnchor(cameraTarget);
             }
+
             translate(translateOffset.x, translateOffset.y);
             
             if(pathCounter == 0) {
@@ -119,16 +133,16 @@ const Graphics = (function() {
             
             if(Config.drawVelocity) {
                 stroke("green");
-                strokeWeight(2);
-                drawLine(planetoid.position, planetoid.velocity, 10);
+                strokeWeight(2 / zoom);
+                drawLine(planetoid.position, planetoid.velocity, 20 / zoom);
             }
             
             if(Config.drawAcceleration) {
                 stroke("yellow");
-                strokeWeight(2);
+                strokeWeight(2 / zoom);
                 
                 for(let accel of planetoid.accelerationsDisplay) {
-                    drawLine(planetoid.position, accel, 100);
+                    drawLine(planetoid.position, accel, 200 / zoom);
                 }
             }
             
