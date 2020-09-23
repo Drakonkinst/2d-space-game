@@ -5,7 +5,7 @@ const CelestialBody = (function() {
             this.id = uuidv4();
             this.universe = universe;
             this.mass = mass;
-            this.position = position.copy().add(Vector.of(width / 2, height / 2));
+            this.position = position.copy().add(center);
             this.velocity = initialVelocity.copy();
             
             // display variables

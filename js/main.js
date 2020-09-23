@@ -1,4 +1,5 @@
 let canvas;
+let center;
 let currentScenario;
 let universe;
 let cameraTarget;
@@ -28,7 +29,6 @@ let TwoBodyScenario = new Scenario(
 
 let ThreeBodyScenario = new Scenario(
     function() {
-        let center = Vector.of(width / 2, height / 2);
         universe = new Universe();
         universe.add(new Planetoid("Blue", 15.0, center.copy(), Vector.of(0.5, 0), 50, "blue"));
         universe.add(new Planetoid("Red", 1.0, center.copy().add(Vector.of(0, -150)), Vector.of(-15, 0), 15, "red"));
@@ -80,6 +80,7 @@ function setup() {
     cameraFollow(universe.allBodies[0]);
     canvas = createCanvas();
     resetCanvas();
+    recalcluateCenter();
     
     Input.setup();
     console.log("Setup complete!");
@@ -88,7 +89,8 @@ function setup() {
 function resetCanvas() {
     const windowWidthRatio = 0.6;
     const windowHeightRatio = 0.8;
-    canvas = resizeCanvas(window.innerWidth * windowWidthRatio, window.innerHeight * windowHeightRatio)
+    canvas = resizeCanvas(window.innerWidth * windowWidthRatio, window.innerHeight * windowHeightRatio);
+    recalcluateCenter();
 }
 
 function windowResized() {
@@ -111,6 +113,8 @@ function cameraFollow(obj) {
 
 function getCameraAnchor(centerPoint) {
     return Vector.of(-centerPoint.x + width / 2, -centerPoint.y + height / 2);
+function recalcluateCenter() {
+    center = Vector.of(width / 2, height / 2);
 }
 
 function draw() {
