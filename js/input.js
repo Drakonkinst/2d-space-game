@@ -21,6 +21,9 @@ const Input = (function() {
             this.addOnKey(SPACE, function() {
                 Config.isStopped = !Config.isStopped;
             });
+            this.addOnKey("O", function() {
+                Config.drawPaths = !Config.drawPaths;
+            })
             debug("Registered " + numKeyBinds + " keybinds");
         },
         
