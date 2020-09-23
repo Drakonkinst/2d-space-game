@@ -4,6 +4,7 @@ html, body {
 
 body {
   background: #333333;
+  font-family: 'Space Mono', monospace;
   color: #f3f3f3;
   margin: 0;
   display: flex;
@@ -27,6 +28,31 @@ a {
 
 .footer {
   position: absolute;
+  font-size: 0.7em;
   bottom: 15px;
   right: 15px;
+}
+
+button {
+  border: 1px black;
+  margin-bottom: 5px;
+  background: #dddddd;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #fff;
+}
+
+.control-buttons button {
+  min-width: 170px;
+}
+
+button.active {
+  background: #555555;
+}
+
+button:disabled {
+  cursor: default;
 }

@@ -14,20 +14,58 @@ const Input = (function() {
     
     return {
         setup() {
-            this.addOnKey("P", function() {
+            let buttonList = $(".control-buttons");
+            let resetButton = $("<button>").addClass("reset-button").text("Reset (R)").click(function () {
+                currentScenario.onStart();
+            }).appendTo(buttonList);
+            let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity").text("Toggle Force/Velocity (P)").click(function () {
                 Config.drawAcceleration = !Config.drawAcceleration;
                 Config.drawVelocity = !Config.drawVelocity;
+                $(this).toggleClass("active");
+            }).appendTo(buttonList);
+            let togglePaths = $("<button>").addClass("toggle-paths").text("Toggle Paths (O)").click(function () {
+                Config.drawPaths = !Config.drawPaths;
+                $(this).toggleClass("active");
+            }).appendTo(buttonList);
+            let pauseButton = $("<button>").addClass("pause-button").text("Pause (SPACE)").click(function () {
+                Config.isStopped = !Config.isStopped;
+                $(this).toggleClass("active");
+                if($(this).hasClass("active")) {
+                    $(this).text("Unpause (SPACE)");
+                } else {
+                    $(this).text("Pause (SPACE)");
+                }
+            }).appendTo(buttonList);
+            
+            
+            this.addOnKey("P", function() {
+                toggleForceVelocity.click();
             });
             this.addOnKey(SPACE, function() {
-                Config.isStopped = !Config.isStopped;
+                pauseButton.click();
             });
             this.addOnKey("O", function() {
-                Config.drawPaths = !Config.drawPaths;
+                togglePaths.click();
             });
             this.addOnKey("R", function() {
-                currentScenario.onStart();
+                resetButton.click();
             });
             debug("Registered " + numKeyBinds + " keybinds");
+            
+            $("button").click(function() {
+                $(this).blur();
+            });
+            
+            
+            if(Config.drawAcceleration || Config.drawVelocity) {
+                toggleForceVelocity.addClass("active");
+            }
+            if(Config.drawPaths) {
+                togglePaths.addClass("active");
+            }
+            if(Config.isStopped) {
+                pauseButton.addClass("active");
+            }
         },
         
         addOnKey(key, callback) {
