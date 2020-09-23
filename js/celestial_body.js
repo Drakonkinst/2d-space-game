@@ -1,6 +1,7 @@
 const CelestialBody = (function() {
     return class CelestialBody {
-        constructor(mass, position, initialVelocity) {
+        constructor(name, mass, position, initialVelocity) {
+            this.name = name;
             this.id = uuidv4();
             this.universe = universe;
             this.mass = mass;

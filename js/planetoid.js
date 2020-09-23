@@ -1,7 +1,7 @@
 const Planetoid = (function() {
     return class Planetoid extends CelestialBody {
-        constructor(mass, position, initialVelocity, radius, color) {
-            super(mass, position, initialVelocity);
+        constructor(name, surfaceGravity, position, initialVelocity, radius, color) {
+            super(name, surfaceGravity * radius * radius / Universe.getGravitationalConstant(), position, initialVelocity);
             this.radius = radius;
             this.color = color;
         }

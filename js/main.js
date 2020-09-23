@@ -16,8 +16,8 @@ let TwoBodyScenario = new Scenario(
     function() {
         let center = Vector.of(width / 2, height / 2);
         universe = new Universe();
-        universe.add(new Planetoid(10000, center.copy(), Vector.of(0.5, 0), 50, "blue"));
-        universe.add(new Planetoid(10, center.copy().add(Vector.of(0, -100)), Vector.of(10, 0), 15, "red"));
+        universe.add(new Planetoid("Blue", 15.0, center.copy(), Vector.of(0.5, 0), 50, "blue"));
+        universe.add(new Planetoid("Red", 1.0, center.copy().add(Vector.of(0, -110)), Vector.of(20, 0), 15, "red"));
         cameraFollow(universe.allBodies[0]);
     },
     
@@ -27,12 +27,12 @@ let TwoBodyScenario = new Scenario(
 );
 
 let ThreeBodyScenario = new Scenario(
-    function () {
+    function() {
         let center = Vector.of(width / 2, height / 2);
         universe = new Universe();
-        universe.add(new Planetoid(10000, center.copy(), Vector.of(0.1, 0), 50, "blue"));
-        universe.add(new Planetoid(10, center.copy().add(Vector.of(0, -100)), Vector.of(10, 0), 15, "red"));
-        universe.add(new Planetoid(5000, center.copy().add(Vector.of(0, 200)), Vector.of(10, 0), 30, "gray"));
+        universe.add(new Planetoid("Blue", 15.0, center.copy(), Vector.of(0.5, 0), 50, "blue"));
+        universe.add(new Planetoid("Red", 1.0, center.copy().add(Vector.of(0, -150)), Vector.of(-15, 0), 15, "red"));
+        universe.add(new Planetoid("Gray", 1.0, center.copy().add(Vector.of(0, 200)), Vector.of(15, 0), 20, "gray"));
         cameraFollow(universe.allBodies[0]);
     },
 
