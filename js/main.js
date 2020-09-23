@@ -60,12 +60,23 @@ let ThreeBodySolution = new Scenario(
 );
 
 function setup() {
-    canvas = createCanvas(1000, 800);
     setScenario(TwoBodyScenario);
     cameraFollow(universe.allBodies[0]);
+    canvas = createCanvas();
+    resetCanvas();
     
     Input.setup();
     console.log("Setup complete!");
+}
+
+function resetCanvas() {
+    const windowWidthRatio = 0.6;
+    const windowHeightRatio = 0.8;
+    canvas = resizeCanvas(window.innerWidth * windowWidthRatio, window.innerHeight * windowHeightRatio)
+}
+
+function windowResized() {
+    resetCanvas();    
 }
 
 function setScenario(scene) {

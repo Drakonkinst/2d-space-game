@@ -15,5 +15,6 @@ body {
 
 .info {
   width: 300px;
-  display: relative
+  display: relative;
+  margin-right: 25px;
 }
