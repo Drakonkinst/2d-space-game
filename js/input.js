@@ -2,6 +2,14 @@ function mouseClicked() {
     Input.mouseClicked();
 }
 
+function mouseDragged() {
+    Input.mouseDragged();
+}
+
+function mouseReleased() {
+    Input.mouseReleased();
+}
+
 function keyPressed() {
     Input.onKey(keyCode);
 }
@@ -110,11 +118,53 @@ const Input = (function() {
         },
         
         mouseClicked() {
+            if(!Config.editMode) {
+                return;
+            }
+
+            let mousePos = Input.getMousePos();
+
+            for(let body of universe.allBodies) {
+                if(body instanceof Planetoid && body.pointOnPlanetoid(mousePos)) {
+                    dragTarget = body;
+                }
+            }
+        },
+        
+        mouseDragged() {
+            if(Config.editMode) {
+                if(!Config.isStopped) {
+                    $(".pause-button").click();
+                }
+                if(dragTarget != null) {
+                    // TODO move virtual target
+                    //dragTarget.position = Input.getMousePos();
+                }
+            }
+        },
+        
+        mouseReleased() {
+            if(Config.isStopped) {
+                //$(".pause-button").click();
+            }
+            if(dragTarget != null) {
+                dragTarget.position = Input.getMousePos();
+                dragTarget = null;
+            }
             
         },
         
         getMousePos() {
-            return new Vector(mouseX, mouseY);
+            let pos = new Vector(mouseX, mouseY);
+            let translateOffset;
+            if(cameraTarget.position) {
+                translateOffset = Graphics.getCameraAnchor(cameraTarget.position);
+            } else {
+                translateOffset = Graphics.getCameraAnchor(cameraTarget);
+            }
+            pos.subtract(translateOffset);
+            
+            return pos;
         },
         
         isMousePressed() {
