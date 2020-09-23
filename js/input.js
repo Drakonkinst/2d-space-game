@@ -28,6 +28,19 @@ const Input = (function() {
                 currentScenario.onStart();
             });
             debug("Registered " + numKeyBinds + " keybinds");
+            
+            $(".reset-button").click(function() {
+                Input.onKey("R");
+            });
+            $(".vis-force-velocity-button").click(function () {
+                Input.onKey("P");
+            });
+            $(".vis-path-button").click(function () {
+                Input.onKey("O");
+            });
+            $(".pause-button").click(function () {
+                Input.onKey(SPACE);
+            });
         },
         
         addOnKey(key, callback) {
@@ -44,6 +57,10 @@ const Input = (function() {
         },
         
         onKey(keyCode) {
+            if(typeof keyCode === "string") {
+                keyCode = keyCode.charCodeAt(0);
+            }
+            
             if(keyMap.hasOwnProperty(keyCode)) {
                 let callbacks = keyMap[keyCode];
                 for(let callback of callbacks) {
