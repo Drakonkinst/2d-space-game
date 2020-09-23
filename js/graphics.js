@@ -92,15 +92,23 @@ const Graphics = (function() {
         },
         
         drawPlanetoids() {
+            if(Config.drawPaths) {
+                for(let planetoid of universe.allBodies) {
+                    this.drawPlanetoidPath(planetoid);
+                }
+            }
+            
             for(let planetoid of universe.allBodies) {
                 this.drawPlanetoid(planetoid);
             }
             reset();
         },
-        
-        drawPlanetoid(planetoid) {
-            if(Config.drawPaths && paths.hasOwnProperty(planetoid.id)) {
-                strokeWeight(1.5);
+
+        drawPlanetoidPath(planetoid) {
+            if(!paths.hasOwnProperty(planetoid.id)) {
+                return;
+            }
+            strokeWeight(1.5 / zoom);
                 noFill();
                 beginShape();
                 let path = paths[planetoid.id];
@@ -124,7 +132,10 @@ const Graphics = (function() {
                 }
                 vectorCurveVertex(planetoid.position);
                 endShape();
-            }
+        },
+        
+        drawPlanetoid(planetoid) {
+            
             
             noStroke();
             fill(planetoid.color);
