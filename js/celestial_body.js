@@ -5,7 +5,7 @@ const CelestialBody = (function() {
             this.id = uuidv4();
             this.universe = universe;
             this.mass = mass;
-            this.position = position;
+            this.position = position.copy().add(Vector.of(width / 2, height / 2));
             this.velocity = initialVelocity.copy();
             
             // display variables
@@ -22,14 +22,14 @@ const CelestialBody = (function() {
                 
                 let distSq = otherBody.position.distanceSquared(this.position);
                 let forceDir = otherBody.position.copy().subtract(this.position).normalize();
-                let accelMag = Universe.getGravitationalConstant() * otherBody.mass / distSq;
-                if(accelMag > this.maxAccel && accelMag > 4) {
-                    console.log("distSq=" + distSq + ", accelMag=" + accelMag)
-                    this.maxAccel = accelMag;
-                }
+                let accelMag = universe.getGravitationalConstant() * otherBody.mass / distSq;
                 let acceleration = forceDir.scale(accelMag * timestep);
                 this.velocity.add(acceleration);
                 this.accelerationsDisplay.push(acceleration);
+                
+                if(accelMag > this.maxAccel && accelMag > 4) {
+                    this.maxAccel = accelMag;
+                }
             }
         }
         
