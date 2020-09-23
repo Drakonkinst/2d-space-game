@@ -28,19 +28,6 @@ const Input = (function() {
                 currentScenario.onStart();
             });
             debug("Registered " + numKeyBinds + " keybinds");
-            
-            $(".reset-button").click(function() {
-                Input.onKey("R");
-            });
-            $(".vis-force-velocity-button").click(function () {
-                Input.onKey("P");
-            });
-            $(".vis-path-button").click(function () {
-                Input.onKey("O");
-            });
-            $(".pause-button").click(function () {
-                Input.onKey(SPACE);
-            });
         },
         
         addOnKey(key, callback) {
