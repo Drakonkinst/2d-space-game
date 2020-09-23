@@ -78,15 +78,20 @@ const Input = (function() {
         
         createCameraFollowOptions() {
             $(".camera-follow-options").empty();
-            this.createCameraFollowOption(Vector.of(0, 0), "Origin");
+            this.createCameraFollowOption(center, "Origin").attr("disabled", true);
             
             for(let body of universe.allBodies) {
-                this.createCameraFollowOption(body, body.name);
+                let button = this.createCameraFollowOption(body, body.name);
+                if(body == cameraTarget) {
+                    button.click();
+                }
             }
         },
         
         createCameraFollowOption(body, text) {
-            $("<button>").addClass("camera-follow-option").text(text).click(function() {
+            return $("<button>").addClass("camera-follow-option").text(text).click(function() {
+                $(".camera-follow-option").attr("disabled", false);
+                $(this).attr("disabled", true);
                 cameraFollow(body);
             }).appendTo(".camera-follow-options");
         },
