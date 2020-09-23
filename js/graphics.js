@@ -59,7 +59,15 @@ const Graphics = (function() {
             reset();
             background(0);
             
-            translate(cameraTarget.x, cameraTarget.y);
+            let translateOffset;
+            if(cameraTarget.position) {
+                // given center point, must find anchor
+                translateOffset = getCameraAnchor(cameraTarget.position);
+            } else {
+                // no need to find anchor
+                translateOffset = cameraTarget;
+            }
+            translate(translateOffset.x, translateOffset.y);
             
             if(pathCounter == 0) {
                 pathCounter = Config.recordPathInterval;
@@ -77,6 +85,33 @@ const Graphics = (function() {
         },
         
         drawPlanetoid(planetoid) {
+            if(Config.drawPaths && paths.hasOwnProperty(planetoid.id)) {
+                strokeWeight(1.5);
+                noFill();
+                beginShape();
+                let path = paths[planetoid.id];
+                let n = path.length;
+                const MAX_FADE = 155;
+                const MAX_FADE_DIST = 200;
+                stroke(255 - MAX_FADE * min(n / MAX_FADE_DIST, 1));
+                for(let i = 0; i < n; i++) {
+                    let point = path[i];
+                    vectorCurveVertex(point);
+
+                    if(i > 0 && i % 10 == 0) {
+                        endShape();
+                        stroke(255 - MAX_FADE * min((n - i) / MAX_FADE_DIST, 1));
+                        beginShape();
+                        vectorCurveVertex(path[i - 2]);
+                        vectorCurveVertex(path[i - 1]);
+                        vectorCurveVertex(point);
+                    }
+
+                }
+                vectorCurveVertex(planetoid.position);
+                endShape();
+            }
+            
             noStroke();
             fill(planetoid.color);
             let d = planetoid.radius * 2;
@@ -93,35 +128,8 @@ const Graphics = (function() {
                 strokeWeight(2);
                 
                 for(let accel of planetoid.accelerationsDisplay) {
-                    drawLine(planetoid.position, accel, 1000);
+                    drawLine(planetoid.position, accel, 100);
                 }
-            }
-            
-            if(Config.drawPaths && paths.hasOwnProperty(planetoid.id)) {
-                strokeWeight(1.5);
-                noFill();
-                beginShape();
-                let path = paths[planetoid.id];
-                let n = path.length;
-                const MAX_FADE = 155;
-                const MAX_FADE_DIST = 200;
-                stroke(255 - MAX_FADE * min(n / MAX_FADE_DIST, 1));
-                for(let i = 0; i < n; i++) {
-                    let point = path[i];
-                    vectorCurveVertex(point);
-                    
-                    if(i > 0 && i % 10 == 0) {
-                        endShape();
-                        stroke(255 - MAX_FADE * min((n - i) / MAX_FADE_DIST, 1));
-                        beginShape();
-                        vectorCurveVertex(path[i - 2]);
-                        vectorCurveVertex(path[i - 1]);
-                        vectorCurveVertex(point);
-                    }
-                    
-                }
-                vectorCurveVertex(planetoid.position);
-                endShape();
             }
             
             if(pathCounter == 0 && !Config.isStopped) {

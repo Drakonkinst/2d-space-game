@@ -16,12 +16,19 @@
 <body>
     <div class="info">
         <p>Controls:</p>
+        <li>R: Reset</li>
         <li>P: Toggle force and velocity visualization</li>
         <li>O: Toggle path drawing</li>
         <li>SPACE: Pause / Unpause</li>
         <p>Choose Scenario:</p>
-        <button onclick="setScenario(TwoBodyScenario)">2 Body System</button>
-        <button onclick="setScenario(ThreeBodyScenario)">3 Body System</button>
+        <button onclick="setScenario(TwoBodyScenario)">2-Body System</button>
+        <button onclick="setScenario(ThreeBodyScenario)">3-Body System</button>
+        <!--<button onclick="setScenario(ThreeBodySolution)">Symmetrical 3-Body</button>-->
+        <p>Camera Follow:</p>
+        <button onclick="cameraFollow(Vector.of(0, 0))">Origin</button>
+        <button onclick="cameraFollow(universe.allBodies[0])">Blue</button>
+        <button onclick="cameraFollow(universe.allBodies[1])">Red</button>
+        <button onclick="cameraFollow(universe.allBodies[2])">Gray</button>
     </div>
     
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"

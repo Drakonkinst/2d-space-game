@@ -23,7 +23,10 @@ const Input = (function() {
             });
             this.addOnKey("O", function() {
                 Config.drawPaths = !Config.drawPaths;
-            })
+            });
+            this.addOnKey("R", function() {
+                currentScenario.onStart();
+            });
             debug("Registered " + numKeyBinds + " keybinds");
         },
         
