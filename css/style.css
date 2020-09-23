@@ -3,6 +3,8 @@ html, body {
 }
 
 body {
+  background: #333333;
+  color: #f3f3f3;
   margin: 0;
   display: flex;
 
@@ -13,8 +15,18 @@ body {
   align-items: center;
 }
 
+a {
+  color: #f3f3f3;
+}
+
 .info {
   width: 300px;
   display: relative;
   margin-right: 25px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
 }
