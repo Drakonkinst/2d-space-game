@@ -4,6 +4,9 @@ let currentScenario;
 let universe;
 let cameraTarget;
 
+let defaultUpdatesPerTick = Config.updatesPerTick;
+let defaultTimestep = Config.timestep;
+
 const Scenario = (function() {
     return class Scenario {
         constructor(onStart, onUpdate) {
@@ -99,7 +102,12 @@ function windowResized() {
 
 function setScenario(scene) {
     currentScenario = scene;
-    scene.onStart();    
+    
+    // reset some stuff
+    Config.updatesPerTick = defaultUpdatesPerTick;
+    Config.timestep = defaultTimestep;
+
+    scene.onStart();
     Input.createCameraFollowOptions();
 }
 
@@ -111,17 +119,17 @@ function cameraFollow(obj) {
     cameraTarget = obj;
 }
 
-function getCameraAnchor(centerPoint) {
-    return Vector.of(-centerPoint.x + width / 2, -centerPoint.y + height / 2);
 function recalcluateCenter() {
     center = Vector.of(width / 2, height / 2);
 }
 
 function draw() {
-    universe.update(.5);
+    for(let i = 0; i < Config.updatesPerTick; i++) {
+        universe.update(Config.timestep);
+    }
     
     currentScenario.onUpdate();
-    
+    Input.update();
     Graphics.draw();
 }
 
