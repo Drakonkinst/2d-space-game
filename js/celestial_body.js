@@ -1,10 +1,13 @@
 const CelestialBody = (function() {
     return class CelestialBody {
         constructor(mass, position, initialVelocity) {
+            this.id = uuidv4();
             this.universe = universe;
             this.mass = mass;
             this.position = position;
             this.velocity = initialVelocity.copy();
+            
+            // display variables
             this.accelerationsDisplay = [];
         }
         
@@ -25,7 +28,6 @@ const CelestialBody = (function() {
         }
         
         updatePosition(timestep) {
-            
             // update position
             this.position.add(this.velocity.copy().scale(timestep));
         }
