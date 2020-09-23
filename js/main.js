@@ -156,6 +156,7 @@ function setScenario(scene) {
     currentScenario = scene;
     
     // reset some stuff
+    Graphics.setZoom(1);
     Config.updatesPerTick = defaultUpdatesPerTick;
     Config.timestep = defaultTimestep;
 
