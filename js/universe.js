@@ -14,6 +14,10 @@ const Universe = (function() {
         }
         
         update(timestep) {
+            if(Config.isStopped) {
+                return;
+            }
+            
             for(let celestialBody of this.allBodies) {
                 celestialBody.updateVelocity(this.allBodies, timestep);
             }

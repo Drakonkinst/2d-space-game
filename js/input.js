@@ -2,33 +2,44 @@ function mouseClicked() {
     Input.mouseClicked();
 }
 
-function keyTyped() {
-    Input.onKey(key);
+function keyPressed() {
+    Input.onKey(keyCode);
 }
 
 const Input = (function() {
-    let keyMap = {};
+    const SPACE = 32;
+    
+    const keyMap = {};
+    let numKeyBinds = 0;
     
     return {
         setup() {
-            this.addOnKey("p", function() {
+            this.addOnKey("P", function() {
                 Config.drawAcceleration = !Config.drawAcceleration;
                 Config.drawVelocity = !Config.drawVelocity;
             });
+            this.addOnKey(SPACE, function() {
+                Config.isStopped = !Config.isStopped;
+            });
+            debug("Registered " + numKeyBinds + " keybinds");
         },
         
         addOnKey(key, callback) {
-            key = key.toLowerCase();
+            if(typeof key === "string") {
+                key = key.charCodeAt(0);
+            }
+            
             if(!keyMap.hasOwnProperty(key)) {
                 keyMap[key] = [];
             }
             let callbacks = keyMap[key];
             callbacks.push(callback);
+            numKeyBinds++;
         },
         
-        onKey(key) {
-            if(keyMap.hasOwnProperty(key)) {
-                let callbacks = keyMap[key];
+        onKey(keyCode) {
+            if(keyMap.hasOwnProperty(keyCode)) {
+                let callbacks = keyMap[keyCode];
                 for(let callback of callbacks) {
                     callback();
                 }
