@@ -2,12 +2,13 @@ const Universe = (function() {
     const GRAVITATIONAL_CONSTANT = 1; //6.67408e-11;
     //const GRAVITATIONAL_CONSTANT = 6.67408e-11;
     return class Universe {
-        static getGravitationalConstant() {
-            return GRAVITATIONAL_CONSTANT;
+        getGravitationalConstant() {
+            return this.G;
         }
         
         constructor() {
             this.allBodies = [];
+            this.G = GRAVITATIONAL_CONSTANT;
         }
         
         add(celestialBody) {
