@@ -41,8 +41,9 @@ let ThreeBodyScenario = new Scenario(
     }
 );
 
+/*
 let ThreeBodySolution = new Scenario(
-    function () {
+    function() {
         let center = Vector.of(width / 2, height / 2);
         universe = new Universe();
         let posScale = 1;
@@ -55,7 +56,22 @@ let ThreeBodySolution = new Scenario(
     },
 
     function () {
+        
+    }
+);*/
 
+let SolarSystem = new Scenario(
+    function() {
+        let center = Vector.of(width / 2, height / 2);
+        universe = new Universe();
+        universe.add(new Planetoid("Sun", 28, center.copy(), Vector.of(1, 0), 70, "#FDB813"));
+        universe.add(new Planetoid("Earth", 1, center.copy().add(Vector.of(120, 0)), Vector.of(0, 35), 15, "green"));
+        universe.add(new Planetoid("Mars", 1, center.copy().add(Vector.of(180, 0)), Vector.of(0, 30), 20, "red"));
+        cameraFollow(universe.allBodies[0]);
+    },
+    
+    function() {
+        
     }
 );
 
