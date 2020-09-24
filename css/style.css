@@ -1,5 +1,5 @@
 html, body {
-    height: 800px;
+    height: 100%;
 }
 
 body {
@@ -14,6 +14,11 @@ body {
 
   /* This centers our sketch vertically. */
   align-items: center;
+}
+
+.content {
+  height: 800px;
+  position: relative;
 }
 
 a {
