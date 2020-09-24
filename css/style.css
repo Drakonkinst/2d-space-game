@@ -1,12 +1,12 @@
 html, body {
-    height: 100%;
+    height: 800px;
 }
 
 body {
   background: #333333;
   font-family: 'Space Mono', monospace;
   color: #f3f3f3;
-  margin: 0;
+  margin: 20px;
   display: flex;
 
   /* This centers our sketch horizontally. */

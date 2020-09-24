@@ -153,7 +153,7 @@ const Graphics = (function() {
                 strokeWeight(2 / zoom);
                 
                 for(let accel of planetoid.accelerationsDisplay) {
-                    drawLine(planetoid.position, accel, 200 / zoom);
+                    drawLine(planetoid.position, accel, 1000 / zoom);
                 }
             }
             
