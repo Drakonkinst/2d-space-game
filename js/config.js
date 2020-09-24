@@ -13,7 +13,7 @@ const Config = (function() {
         
         drawVelocity: false,
         drawAcceleration: false,
-        drawPaths: false,
+        drawPaths: true,
         drawPreviews: false,
     };
 })();
