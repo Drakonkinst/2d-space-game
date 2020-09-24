@@ -1,35 +1,25 @@
 let canvas;
 let center;
-let currentScenario;
 let universe;
 let cameraTarget;
 
 let defaultUpdatesPerTick = Config.updatesPerTick;
 let defaultTimestep = Config.timestep;
 
-const Scenario = (function() {
-    return class Scenario {
-        constructor(onStart, onUpdate) {
-            this.onStart = onStart;
-            this.onUpdate = onUpdate;
-        }
-    };
-})();
-
-let TwoBodyScenarioA = new Scenario(
-    function() {
+ScenarioManager.addScenario("2-Body: Large Central Mass",
+    function () {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(0.5, 0), 50, "blue"));
         universe.add(new Planetoid("Red", 1.0, Vector.of(0, -110), Vector.of(20, 0), 15, "red"));
         cameraFollow(universe.allBodies[0]);
     },
-    
-    function() {
-        
+
+    function () {
+
     }
 );
 
-let TwoBodyScenarioB = new Scenario(
+ScenarioManager.addScenario("2-Body: Equal Mass",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 1.0, Vector.of(0, 0), Vector.of(0.5, 0), 30, "blue"));
@@ -42,7 +32,7 @@ let TwoBodyScenarioB = new Scenario(
     }
 );
 
-let ThreeBodyScenarioA = new Scenario(
+ScenarioManager.addScenario("3-Body: Large Central Mass",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(0.5, 0), 50, "blue"));
@@ -56,7 +46,7 @@ let ThreeBodyScenarioA = new Scenario(
     }
 );
 
-let ThreeBodyScenarioB = new Scenario(
+ScenarioManager.addScenario("3-Body: Unequal Mass",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 5.0, Vector.of(0, 0), Vector.of(0.5, 0), 30, "blue"));
@@ -71,7 +61,7 @@ let ThreeBodyScenarioB = new Scenario(
 );
 
 
-let ThreeBodyScenarioC = new Scenario(
+ScenarioManager.addScenario("3-Body: Equal Mass",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 1.0, Vector.of(0, 0), Vector.of(2, 2), 30, "blue"));
@@ -85,7 +75,7 @@ let ThreeBodyScenarioC = new Scenario(
     }
 );
 
-let ThreeBodySolution = new Scenario(
+ScenarioManager.addScenario("3-Body: Solution",
     function() {
         universe = new Universe();
         universe.G = 1;
@@ -111,12 +101,13 @@ let ThreeBodySolution = new Scenario(
         Config.timestep = 0.02;
     },
 
-    function () {
+    function() {
         
-    }
+    },
+    "For information on how/why this works, see the paper by Chenciner & Montgomery (2000) on the 3-body problem. (can be found from Wikipedia)"
 );
 
-let SolarSystem = new Scenario(
+ScenarioManager.addScenario("Solar System (WIP)",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Sun", 28, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
@@ -132,7 +123,7 @@ let SolarSystem = new Scenario(
 
 function setup() {
     recalcluateCenter();
-    setScenario(TwoBodyScenarioA);
+    ScenarioManager.setScenario("2-Body: Large Central Mass");
     canvas = createCanvas();
     resetCanvas();
     
@@ -140,6 +131,7 @@ function setup() {
     console.log("Setup complete!");
 }
 
+// CANVAS
 function resetCanvas() {
     const windowWidthRatio = 0.6;
     const windowHeightRatio = 0.8;
@@ -149,18 +141,6 @@ function resetCanvas() {
 
 function windowResized() {
     resetCanvas();    
-}
-
-function setScenario(scene) {
-    currentScenario = scene;
-    
-    // reset some stuff
-    Graphics.setZoom(1);
-    Config.updatesPerTick = defaultUpdatesPerTick;
-    Config.timestep = defaultTimestep;
-
-    scene.onStart();
-    Input.createCameraFollowOptions();
 }
 
 function cameraFollow(obj) {
@@ -180,7 +160,7 @@ function draw() {
         universe.update(Config.timestep);
     }
     
-    currentScenario.onUpdate();
+    ScenarioManager.getCurrentScenario().onUpdate();
     Input.update();
     Graphics.draw();
 }

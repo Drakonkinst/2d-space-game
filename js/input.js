@@ -21,32 +21,35 @@ const Input = (function() {
     let numKeyBinds = 0;
     let dragTarget = null;
     
-    return {
-        setup() {
-            let buttonList = $(".control-buttons");
-            
-            /*let editButton = $("<button>").addClass("edit-button").text("Edit Mode: ON (E)").click(function () {
-                Config.editMode = !Config.editMode;
-                $(this).toggleClass("active");
-                if($(this).hasClass("active")) {
-                    $(this).text("Edit Mode: OFF (E)");
-                } else {
-                    $(this).text("Edit Mode: ON (E)");
-                }
-            }).appendTo(buttonList);*/
-            let resetButton = $("<button>").addClass("reset-button").text("Reset (R)").click(function () {
-                setScenario(currentScenario)
-            }).appendTo(buttonList);
-            let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity").text("Toggle Force/Velocity (O)").click(function () {
+    function createControls() {
+        let buttonList = $(".control-buttons").empty();
+
+        /*let editButton = $("<button>").addClass("edit-button").text("Edit Mode: ON (E)").click(function () {
+            Config.editMode = !Config.editMode;
+            $(this).toggleClass("active");
+            if($(this).hasClass("active")) {
+                $(this).text("Edit Mode: OFF (E)");
+            } else {
+                $(this).text("Edit Mode: ON (E)");
+            }
+        }).appendTo(buttonList);*/
+        let resetButton = $("<button>").addClass("reset-button")
+            .text("Reset (R)").attr("title", "Resets the current scenario.").click(function () {
+                ScenarioManager.resetScenario();
+        }).appendTo(buttonList);
+        let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity")
+            .text("Toggle Force/Velocity (O)").attr("title", "Shows/hides force (yellow) and velocity (green) vectors.").click(function () {
                 Config.drawAcceleration = !Config.drawAcceleration;
                 Config.drawVelocity = !Config.drawVelocity;
                 $(this).toggleClass("active");
-            }).appendTo(buttonList);
-            let togglePaths = $("<button>").addClass("toggle-paths").text("Toggle Paths (P)").click(function() {
+        }).appendTo(buttonList);
+        let togglePaths = $("<button>").addClass("toggle-paths")
+            .text("Toggle Paths (P)").attr("title", "Shows/hides the paths of each object.").click(function () {
                 Config.drawPaths = !Config.drawPaths;
                 $(this).toggleClass("active");
-            }).appendTo(buttonList);
-            let pauseButton = $("<button>").addClass("pause-button").text("Pause (SPACE)").click(function() {
+        }).appendTo(buttonList);
+        let pauseButton = $("<button>").addClass("pause-button")
+            .text("Pause (SPACE)").attr("title", "Pauses/resumes the simulation.").click(function () {
                 Config.isStopped = !Config.isStopped;
                 $(this).toggleClass("active");
                 if($(this).hasClass("active")) {
@@ -54,45 +57,72 @@ const Input = (function() {
                 } else {
                     $(this).text("Pause (SPACE)");
                 }
-            }).appendTo(buttonList);
+        }).appendTo(buttonList);
+
+
+
+        Input.addOnKey("O", function () {
+            toggleForceVelocity.click();
+        });
+        Input.addOnKey(SPACE, function () {
+            pauseButton.click();
+        });
+        Input.addOnKey("P", function () {
+            togglePaths.click();
+        });
+        Input.addOnKey("R", function () {
+            resetButton.click();
+        });
+        Input.addOnKey("E", function () {
+            editButton.click();
+        });
+        debug("Registered " + numKeyBinds + " keybinds");
+
+        $("button").click(function () {
+            $(this).blur();
+        });
+
+
+        if(Config.drawAcceleration || Config.drawVelocity) {
+            toggleForceVelocity.addClass("active");
+        }
+        if(Config.drawPaths) {
+            togglePaths.addClass("active");
+        }
+        if(Config.isStopped) {
+            pauseButton.addClass("active").text("Unpause (SPACE)");
+        }
+        if(!Config.editMode) {
+            return;
+            editButton.addClass("active").text("Edit Mode: OFF (E)");
+        }
+    }
+    
+    function createScenarios() {
+        let scenarioList = $(".scenarios").empty();
+        let scenarios = ScenarioManager.getScenarioNames();
+
+        for(let name of scenarios) {
+            let button = $("<button>").addClass("scenario-option").text(name).click(function() {
+                $(".scenario-option").attr("disabled", false);
+                $(this).attr("disabled", true);
+                ScenarioManager.setScenario(name);
+            }).appendTo(scenarioList);
             
-            
-            
-            this.addOnKey("O", function() {
-                toggleForceVelocity.click();
-            });
-            this.addOnKey(SPACE, function() {
-                pauseButton.click();
-            });
-            this.addOnKey("P", function() {
-                togglePaths.click();
-            });
-            this.addOnKey("R", function() {
-                resetButton.click();
-            });
-            this.addOnKey("E", function() {
-                editButton.click();
-            });
-            debug("Registered " + numKeyBinds + " keybinds");
-            
-            $("button").click(function() {
-                $(this).blur();
-            });
-            
-            
-            if(Config.drawAcceleration || Config.drawVelocity) {
-                toggleForceVelocity.addClass("active");
+            let description = ScenarioManager.get(name).description;
+            if(description) {
+                button.attr("title", description)
             }
-            if(Config.drawPaths) {
-                togglePaths.addClass("active");
+            if(name == ScenarioManager.getCurrentScenario().name) {
+                button.attr("disabled", true);
             }
-            if(Config.isStopped) {
-                pauseButton.addClass("active").text("Unpause (SPACE)");
-            }
-            if(!Config.editMode) {
-                return;
-                editButton.addClass("active").text("Edit Mode: OFF (E)");
-            }
+        }
+    }
+    
+    return {
+        setup() {
+            createControls();
+            createScenarios();
         },
         
         update() {

@@ -23,17 +23,7 @@
         
         <div class="scenario-select">
             <p>Choose Scenario:</p>
-            <div class="scenarios">
-                <button onclick="setScenario(TwoBodyScenarioA)">2-Body: Large Central Mass</button>
-                <button onclick="setScenario(TwoBodyScenarioB)">2-Body: Equal Mass</button>
-                <button onclick="setScenario(ThreeBodyScenarioA)">3-Body: Large Central Mass</button>
-                <button onclick="setScenario(ThreeBodyScenarioB)">3-Body: Unequal Mass</button>
-                <button onclick="setScenario(ThreeBodyScenarioC)">3-Body: Equal Mass</button>
-                <button onclick="setScenario(ThreeBodySolution)">3-Body: Solution</button>
-                <button onclick="setScenario(SolarSystem)">Solar System (WIP)</button>
-                <!--<button onclick="setScenario(ThreeBodySolution)">Symmetrical 3-Body</button>-->
-            </div>
-            
+            <div class="scenarios"></div>
         </div>
         
         <div class="camera-follow">
@@ -42,16 +32,16 @@
         </div>
         
         <div class="draw-paths">
-            <p>Draw Paths Relative To:</p>
+            <!--<p>Draw Paths Relative To:</p>-->
             <div class="draw-paths-options"></div>
-
         </div>
         
+        <p>* Tip: Some button have tooltips if you hover over them!</p>
     </div>
     
     <div class="footer">
         <span>Version </span>
-        <a href="https://github.com/Drakonkinst/2d-space-game" target="_blank">0.2</a>
+        <a href="https://github.com/Drakonkinst/2d-space-game" target="_blank">0.3</a>
         <span> by Drakonkinst</span>
     </div>
     
@@ -68,6 +58,7 @@
     <script src="js/universe.js"></script>
     <script src="js/graphics.js"></script>
     <script src="js/input.js"></script>
+    <script src="js/scenario_manager.js"></script>
     <script src="js/main.js"></script>
 </body>
 
