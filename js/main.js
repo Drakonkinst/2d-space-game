@@ -2,6 +2,7 @@ let canvas;
 let center;
 let universe;
 let cameraTarget;
+let pathAnchor = null;
 
 let defaultUpdatesPerTick = Config.updatesPerTick;
 let defaultTimestep = Config.timestep;
@@ -9,9 +10,10 @@ let defaultTimestep = Config.timestep;
 ScenarioManager.addScenario("2-Body: Large Central Mass",
     function () {
         universe = new Universe();
-        universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(0.5, 0), 50, "blue"));
-        universe.add(new Planetoid("Red", 1.0, Vector.of(0, -110), Vector.of(20, 0), 15, "red"));
-        cameraFollow(universe.allBodies[0]);
+        let Blue = universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(2, 0), 50, "blue"));
+        let Red = universe.add(new Planetoid("Red", 1.0, Vector.of(0, -110), Vector.of(20, 0), 15, "red"));
+        cameraFollow(Blue);
+        pathAnchor = Blue;
     },
 
     function () {
@@ -108,16 +110,37 @@ ScenarioManager.addScenario("3-Body: Solution",
 );
 
 ScenarioManager.addScenario("Solar System (WIP)",
-    function() {
+    function(isReset) {
         universe = new Universe();
-        universe.add(new Planetoid("Sun", 28, Vector.of(0, 0), Vector.of(0, 0), 70, "#FDB813"));
-        universe.add(new Planetoid("Earth", 1, Vector.of(120, 0), Vector.of(0, 35), 15, "green"));
-        universe.add(new Planetoid("Mars", 1, Vector.of(180, 0), Vector.of(0, 30), 25, "red"));
-        cameraFollow(universe.allBodies[0]);
+        let Sun = universe.add(new Planetoid("Sun", 20, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
+        let Earth = universe.add(new Planetoid("Earth", 1, Vector.of(120, 0), Vector.of(0, 30), 15, "green"));
+        let Mars = universe.add(new Planetoid("Mars", 2, Vector.of(250, 0), Vector.of(0, 20), 25, "red"));
+        let MarsMoon = universe.add(new Planetoid("Mars Moon", 1, Vector.of(290, 0), Vector.of(0, 13.6), 5, "gray"));
+        //cameraFollow(universe.allBodies[0]);
+        
+        cameraFollow(Mars);
     },
     
     function() {
         
+    }
+);
+
+ScenarioManager.addScenario("Solar System 2 (WIP)",
+    function (isReset) {
+        universe = new Universe();
+        let Sun = universe.add(new Planetoid("Sun", 5, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
+        let Earth = universe.add(new Planetoid("Earth", 1, Vector.of(120, 0), Vector.of(0, 15), 15, "green"));
+        let Mars = universe.add(new Planetoid("Mars", 2, Vector.of(250, 0), Vector.of(0, 10), 25, "red"));
+        let MarsMoon = universe.add(new Planetoid("Mars Moon", 1, Vector.of(300, 0), Vector.of(0, 13), 5, "gray"));
+        //cameraFollow(universe.allBodies[0]);
+
+        cameraFollow(Mars);
+        pathAnchor = Sun;
+    },
+
+    function () {
+
     }
 );
 
@@ -126,8 +149,8 @@ function setup() {
     ScenarioManager.setScenario("2-Body: Large Central Mass");
     canvas = createCanvas();
     resetCanvas();
-    
     Input.setup();
+    
     console.log("Setup complete!");
 }
 

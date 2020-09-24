@@ -11,7 +11,10 @@ const Graphics = (function() {
         vertex(vector.x, vector.y);
     }
     
-    function vectorCurveVertex(vector) {
+    function vectorCurveVertex(vector, skipCorrection) {
+        if(pathAnchor && !skipCorrection) {
+            vector = vector.copy().add(pathAnchor.position);
+        }
         curveVertex(vector.x, vector.y);
     }
     
@@ -47,7 +50,7 @@ const Graphics = (function() {
         line(x1, y1, x2, y2);
     }
     
-    const paths = {};
+    let paths = {};
     let pathCounter = Config.recordPathInterval;
     let zoom = 1;
     
@@ -65,6 +68,10 @@ const Graphics = (function() {
 
         getCameraAnchor(centerPoint) {
             return Vector.of(-centerPoint.x + width / (2 * zoom), -centerPoint.y + height / (2 * zoom));
+        },
+        
+        clearPaths() {
+            paths = {};
         },
         
         draw() {
@@ -88,7 +95,77 @@ const Graphics = (function() {
             }
             pathCounter--;
             
+            this.drawPreview();
             this.drawPlanetoids();
+        },
+        
+        drawPreview() {
+            if(!Config.drawPreviews) {
+                return;
+            }
+            
+            let virtualBodies = [];
+            let virtualPathMap = {};
+            let virtualAnchor = null;
+            
+            for(let planetoid of universe.allBodies) {
+                let virtualBody = new VirtualBody(planetoid);
+                virtualBodies.push(virtualBody);
+                if(planetoid == pathAnchor) {
+                    virtualAnchor = virtualBody;
+                }
+            }
+            
+            let virtualPathCounter = Config.recordPathInterval;
+            for(let i = 0; i < Config.previewDistance; i++) {
+                for(let body of virtualBodies) {
+                    body.updateVelocity(virtualBodies, Config.timestep);
+                }
+                for(let body of virtualBodies) {
+                    body.updatePosition(Config.timestep);
+                    if(virtualPathCounter === 0) {
+                        if(!virtualPathMap.hasOwnProperty(body.host.id)) {
+                            virtualPathMap[body.host.id] = [];
+                        }
+                        let path = virtualPathMap[body.host.id];
+                        let pos = body.position.copy();
+                        
+                        if(virtualAnchor != null) {
+                            pos.subtract(virtualAnchor.position);
+                        }
+                        if(body.host != virtualAnchor) {
+                            path.push(pos);
+                        }
+                        
+                        /*
+                        // also limited by maximum path length
+                        if(path.length > Config.maxPathLength) {
+                            path.shift();
+                        }*/
+                    }
+                }
+                
+                if(virtualPathCounter === 0) {
+                    virtualPathCounter = Config.recordPathInterval;
+                }
+                virtualPathCounter--;
+            }
+            
+            for(let body of virtualBodies) {
+                // final point of path
+                let finalPos = body.position.copy();
+                
+                if(virtualAnchor != null) {
+                    finalPos.subtract(virtualAnchor.position);
+                }
+                
+                virtualPathMap[body.host.id].push(finalPos);
+                
+                if(virtualPathMap.hasOwnProperty(body.host.id)) {
+                    let path = virtualPathMap[body.host.id];
+                    Graphics.drawPath(path, null, 50);
+                }
+            }
         },
         
         drawPlanetoids() {
@@ -103,40 +180,49 @@ const Graphics = (function() {
             }
             reset();
         },
+        
+        drawPath(path, finalPoint, initColorInt, maxFade, maxDist) {
+            
+            let n = path.length;
+            if(!maxDist || !maxFade) {
+                maxDist = 1;
+                maxFade = 0;
+            }
+            
+            strokeWeight(1.5 / zoom);
+            noFill();
+            stroke(initColorInt - maxFade * min(n / maxDist, 1));
+            
+            beginShape();
+            for(let i = 0; i < n; i++) {
+                let point = path[i];
+                vectorCurveVertex(point);
+                
+                if(i > 0 && i % 10 == 0) {
+                    endShape();
+                    stroke(initColorInt - maxFade * min((n - i) / maxDist, 1));
+                    beginShape();
+                    vectorCurveVertex(path[i - 2]);
+                    vectorCurveVertex(path[i - 1]);
+                    vectorCurveVertex(point);
+                }
+            }
+            
+            if(finalPoint) {
+                vectorCurveVertex(finalPoint, true);
+            }
+            endShape();
+        },
 
         drawPlanetoidPath(planetoid) {
             if(!paths.hasOwnProperty(planetoid.id)) {
                 return;
             }
-            strokeWeight(1.5 / zoom);
-                noFill();
-                beginShape();
-                let path = paths[planetoid.id];
-                let n = path.length;
-                const MAX_FADE = 155;
-                const MAX_FADE_DIST = 200;
-                stroke(255 - MAX_FADE * min(n / MAX_FADE_DIST, 1));
-                for(let i = 0; i < n; i++) {
-                    let point = path[i];
-                    vectorCurveVertex(point);
-
-                    if(i > 0 && i % 10 == 0) {
-                        endShape();
-                        stroke(255 - MAX_FADE * min((n - i) / MAX_FADE_DIST, 1));
-                        beginShape();
-                        vectorCurveVertex(path[i - 2]);
-                        vectorCurveVertex(path[i - 1]);
-                        vectorCurveVertex(point);
-                    }
-
-                }
-                vectorCurveVertex(planetoid.position);
-                endShape();
+            let path = paths[planetoid.id];
+            Graphics.drawPath(path, planetoid.position, 255, 155, 200);
         },
         
         drawPlanetoid(planetoid) {
-            
-            
             noStroke();
             fill(planetoid.color);
             let d = planetoid.radius * 2;
@@ -157,12 +243,19 @@ const Graphics = (function() {
                 }
             }
             
-            if(pathCounter == 0 && !Config.isStopped) {
+            if(pathCounter === 0 && !Config.isStopped) {
                 if(!paths.hasOwnProperty(planetoid.id)) {
                     paths[planetoid.id] = [];
                 }
                 let path = paths[planetoid.id]
-                path.push(planetoid.position.copy());
+                let pos = planetoid.position.copy();
+                
+                if(pathAnchor != null) {
+                    pos.subtract(pathAnchor.position);
+                }
+                if(planetoid != pathAnchor) {
+                    path.push(pos);
+                }
                 
                 if(path.length > Config.maxPathLength) {
                     path.shift();

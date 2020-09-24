@@ -39,3 +39,32 @@ const CelestialBody = (function() {
         }
     };
 })();
+
+const VirtualBody = (function () {
+    return class VirtualBody {
+        constructor(body) {
+            this.host = body;
+            this.position = body.position.copy();
+            this.velocity = body.velocity.copy();
+            this.mass = body.mass;
+        }
+        
+        updateVelocity(allBodies, timestep) {
+            for(let otherBody of allBodies) {
+                if(otherBody == this) {
+                    continue;
+                }
+                
+                let distSq = otherBody.position.distanceSquared(this.position);
+                let forceDir = otherBody.position.copy().subtract(this.position).normalize();
+                let accelMag = universe.getGravitationalConstant() * otherBody.mass / distSq;
+                let acceleration = forceDir.scale(accelMag * timestep);
+                this.velocity.add(acceleration);
+            }
+        }
+        
+        updatePosition(timestep) {
+            this.position.add(this.velocity.copy().scale(timestep));
+        }
+    }
+})();

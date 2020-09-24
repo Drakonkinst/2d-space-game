@@ -13,6 +13,7 @@ const Universe = (function() {
         
         add(celestialBody) {
             this.allBodies.push(celestialBody);
+            return celestialBody;
         }
         
         update(timestep) {

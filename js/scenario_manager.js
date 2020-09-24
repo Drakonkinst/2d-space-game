@@ -48,9 +48,20 @@ const ScenarioManager = (function() {
             Graphics.setZoom(1);
             Config.updatesPerTick = defaultUpdatesPerTick;
             Config.timestep = defaultTimestep;
+            pathAnchor = null;
 
             scene.onStart();
+            
             Input.createCameraFollowOptions();
+            Input.createDrawPathOptions();
+            
+            // delays call until Input is set up, don't need this anymore
+            /*
+            if($(".camera-follow-options").length) {
+                Input.createCameraFollowOptions();
+            } else {
+                setTimeout(Input.createCameraFollowOptions, 5);
+            }*/
         },
         
         resetScenario() {

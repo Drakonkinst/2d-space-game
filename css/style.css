@@ -19,16 +19,14 @@ body {
 .content {
   height: 800px;
   position: relative;
+  margin-right: 10px;
+  width: 300px;
+  display: relative;
+  margin-right: 25px;
 }
 
 a {
   color: #f3f3f3;
-}
-
-.info {
-  width: 300px;
-  display: relative;
-  margin-right: 25px;
 }
 
 .footer {
