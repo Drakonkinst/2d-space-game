@@ -110,9 +110,9 @@ ScenarioManager.addScenario("3-Body: Solution",
 ScenarioManager.addScenario("Solar System (WIP)",
     function() {
         universe = new Universe();
-        universe.add(new Planetoid("Sun", 28, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
+        universe.add(new Planetoid("Sun", 28, Vector.of(0, 0), Vector.of(0, 0), 70, "#FDB813"));
         universe.add(new Planetoid("Earth", 1, Vector.of(120, 0), Vector.of(0, 35), 15, "green"));
-        universe.add(new Planetoid("Mars", 1, Vector.of(180, 0), Vector.of(0, 30), 20, "red"));
+        universe.add(new Planetoid("Mars", 1, Vector.of(180, 0), Vector.of(0, 30), 25, "red"));
         cameraFollow(universe.allBodies[0]);
     },
     

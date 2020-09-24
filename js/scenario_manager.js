@@ -38,7 +38,10 @@ const ScenarioManager = (function() {
         },
         
         setScenario(scene) {
-            scene = scenarios[scene];
+            if(typeof scene === "string") {
+                scene = scenarios[scene];
+            }
+            
             currentScenario = scene;
 
             // reset some stuff
