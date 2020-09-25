@@ -38,7 +38,7 @@ ScenarioManager.addScenario("3-Body: Large Central Mass",
     function() {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(0.5, 0), 50, "blue"));
-        universe.add(new Planetoid("Red", 1.0, Vector.of(0, -150), Vector.of(-15, 0), 15, "red"));
+        universe.add(new Planetoid("Red", 1.0, Vector.of(0, -150), Vector.of(-14, 0), 15, "red"));
         universe.add(new Planetoid("Gray", 1.0, Vector.of(0, 200), Vector.of(15, 0), 20, "gray"));
         cameraFollow(universe.allBodies[0]);
     },
@@ -118,7 +118,8 @@ ScenarioManager.addScenario("Solar System (WIP)",
         let MarsMoon = universe.add(new Planetoid("Mars Moon", 1, Vector.of(290, 0), Vector.of(0, 13.6), 5, "gray"));
         //cameraFollow(universe.allBodies[0]);
         
-        cameraFollow(Mars);
+        cameraFollow(Sun);
+        pathAnchor = Sun;
     },
     
     function() {
@@ -126,23 +127,26 @@ ScenarioManager.addScenario("Solar System (WIP)",
     }
 );
 
+/*
 ScenarioManager.addScenario("Solar System 2 (WIP)",
     function (isReset) {
         universe = new Universe();
-        let Sun = universe.add(new Planetoid("Sun", 5, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
-        let Earth = universe.add(new Planetoid("Earth", 1, Vector.of(120, 0), Vector.of(0, 15), 15, "green"));
-        let Mars = universe.add(new Planetoid("Mars", 2, Vector.of(250, 0), Vector.of(0, 10), 25, "red"));
-        let MarsMoon = universe.add(new Planetoid("Mars Moon", 1, Vector.of(300, 0), Vector.of(0, 13), 5, "gray"));
+        let Sun = universe.add(new Planetoid("Sun", 2, Vector.of(0, 0), Vector.of(1, 0), 70, "#FDB813"));
+        let Earth = universe.add(new Planetoid("Earth", 1, Vector.of(140, 0), Vector.of(0, 8.7), 15, "green"));
+        let Moon = universe.add(new Planetoid("Moon", 0.01, Vector.of(160, 0), Vector.of(0, 10.8), 4, "gray"))
+        //let Mars = universe.add(new Planetoid("Mars", 0.33, Vector.of(180, 0), Vector.of(0, 23.7), 12, "red"));
+        //let MarsMoon = universe.add(new Planetoid("Mars Moon", 0.2, Vector.of(300, 0), Vector.of(0, 13), 5, "gray"));
         //cameraFollow(universe.allBodies[0]);
 
-        cameraFollow(Mars);
-        pathAnchor = Sun;
+        cameraFollow(Earth);
+        pathAnchor = Earth;
+        
     },
 
     function () {
 
     }
-);
+);*/
 
 function setup() {
     recalcluateCenter();

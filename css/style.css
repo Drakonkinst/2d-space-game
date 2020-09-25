@@ -25,6 +25,10 @@ body {
   margin-right: 25px;
 }
 
+.tip {
+  margin-top: 5px;
+}
+
 a {
   color: #f3f3f3;
 }
@@ -93,4 +97,14 @@ button:disabled {
   border-radius: 50%;
   background: #0095ff;
   cursor: pointer;
+}
+
+.body-container {
+  border: 1px solid white;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.body-selector-title {
+  margin-top: 0;
 }

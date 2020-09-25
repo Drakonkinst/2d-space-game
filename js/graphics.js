@@ -223,11 +223,15 @@ const Graphics = (function() {
         },
         
         drawPlanetoid(planetoid) {
+            if(!planetoid.visible) {
+                return;
+            }
+            
             noStroke();
             
-            if(Input.getSelectedBody() == planetoid) {
+            if(Input.getSelectedBody() == planetoid && Config.mode == "EDIT") {
                 fill("yellow");
-                let highlight = planetoid.radius * 2 + 5;
+                let highlight = planetoid.radius * 2 + 5 / zoom;
                 ellipse(planetoid.position.x, planetoid.position.y, highlight, highlight);
             }
             

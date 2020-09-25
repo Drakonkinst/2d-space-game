@@ -11,6 +11,7 @@ const CelestialBody = (function() {
             // display variables
             this.accelerationsDisplay = [];
             this.maxAccel = -1;
+            this.visible = true;
         }
         
         updateVelocity(allBodies, timestep) {

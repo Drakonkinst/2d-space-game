@@ -9,7 +9,7 @@ const Config = (function() {
         recordPathInterval: 3,
         
         // how many ticks ahead should be previewed
-        previewDistance: 5000,
+        previewDistance: 10000,
         
         drawVelocity: false,
         drawAcceleration: false,
