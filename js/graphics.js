@@ -224,6 +224,13 @@ const Graphics = (function() {
         
         drawPlanetoid(planetoid) {
             noStroke();
+            
+            if(Input.getSelectedBody() == planetoid) {
+                fill("yellow");
+                let highlight = planetoid.radius * 2 + 5;
+                ellipse(planetoid.position.x, planetoid.position.y, highlight, highlight);
+            }
+            
             fill(planetoid.color);
             let d = planetoid.radius * 2;
             ellipse(planetoid.position.x, planetoid.position.y, d, d);
