@@ -21,6 +21,37 @@ const Input = (function() {
     let dragTarget = null;
     let wasPausedByEdit = false;
     let lastModeExit = null;
+
+    
+    function createButton(htmlClasses, text, description, onClick, togglesActive, isClicked, clickedText) {
+        let button = $("<button>").addClass(htmlClasses).text(text).click(function() {
+            let self = $(this);
+            onClick(self);
+
+            if(togglesActive) {
+                $(this).toggleClass("active");
+            }
+
+            if(togglesActive && clickedText) {
+                if($(this).hasClass("active")) {
+                    $(this).text(clickedText);
+                } else {
+                    $(this).text(text);
+                }
+            }
+        });
+
+        if(description) {
+            button.attr("title", description);
+        }
+
+        if(isClicked && togglesActive) {
+            button.addClass("active");
+            button.text(clickedText);
+        }
+
+        return button;
+    }
     
     function createViewControls() {
         $("<div>").addClass("controls")
@@ -31,45 +62,22 @@ const Input = (function() {
         
         let buttonList = $(".control-buttons").empty();
         
-        let resetButton = $("<button>").addClass("reset-button")
-            .text("Reset (R)").attr("title", "Resets the current scenario.").click(function () {
-                ScenarioManager.resetScenario();
-            }).appendTo(buttonList);
+        createButton("reset-button", "Reset (R)", "Resets the current scenario", function() {
+            ScenarioManager.resetScenario();
+        }).appendTo(buttonList);
             
-        let toggleForceVelocity = $("<button>").addClass("toggle-force-velocity")
-            .text("Toggle Force/Velocity (O)").attr("title", "Shows/hides force (yellow) and velocity (green) vectors.").click(function () {
-                Config.drawAcceleration = !Config.drawAcceleration;
-                Config.drawVelocity = !Config.drawVelocity;
-                $(this).toggleClass("active");
-            }).appendTo(buttonList);
-            
-        let togglePaths = $("<button>").addClass("toggle-paths")
-            .text("Toggle Paths (P)").attr("title", "Shows/hides the paths of each object.").click(function () {
-                Config.drawPaths = !Config.drawPaths;
-                $(this).toggleClass("active");
-            }).appendTo(buttonList);
-            
-        let pauseButton = $("<button>").addClass("pause-button")
-            .text("Pause (SPACE)").attr("title", "Pauses/resumes the simulation.").click(function () {
-                Config.isStopped = !Config.isStopped;
-                $(this).toggleClass("active");
-                if($(this).hasClass("active")) {
-                    $(this).text("Unpause (SPACE)");
-                } else {
-                    $(this).text("Pause (SPACE)");
-                }
-            }).appendTo(buttonList);
-
-        if(Config.drawAcceleration || Config.drawVelocity) {
-            toggleForceVelocity.addClass("active");
-        }
-        if(Config.drawPaths) {
-            togglePaths.addClass("active");
-        }
+        createButton("toggle-force-velocity", "Toggles Force/Velocity (O)", "Shows/hides force (yellow) and velocity (green) vectors.", function() {
+            Config.drawAcceleration = !Config.drawAcceleration;
+            Config.drawVelocity = !Config.drawVelocity;
+        }, true, Config.drawAcceleration || Config.drawVelocity).appendTo(buttonList);
         
-        if(Config.isStopped) {
-            pauseButton.addClass("active").text("Unpause (SPACE)");
-        }
+        createButton("toggle-paths", "Toggle Paths (P)", "Shows/hides the paths of each object.", function() {
+            Config.drawPaths = !Config.drawPaths;
+        }, true, Config.drawPaths).appendTo(buttonList);
+        
+        createButton("pause-button", "Pause (SPACE)", "Pauses/resumes the simulation", function() {
+            Config.isStopped = !Config.isStopped;
+        }, true, Config.isStopped, "Unpause (SPACE)").appendTo(buttonList);
     }
     
     function createEditControls() {
@@ -81,20 +89,13 @@ const Input = (function() {
 
         let buttonList = $(".control-buttons").empty();
 
-        let resetButton = $("<button>").addClass("reset-button")
-            .text("Reset (R)").attr("title", "Resets the current scenario.").click(function () {
-                ScenarioManager.resetScenario();
-            }).appendTo(buttonList);
-            
-        let previewButton = $("<button>").addClass("toggle-previews")
-            .text("Toggle Previews (I)").attr("title", "Shows/hides a preview of the future orbiting pattern.").click(function () {
-                Config.drawPreviews = !Config.drawPreviews;
-                $(this).toggleClass("active");
-            }).appendTo(buttonList);
+        createButton("reset-button", "Reset (R)", "Resets the current scenario", function() {
+            ScenarioManager.resetScenario();
+        }).appendTo(buttonList);
 
-        if(Config.drawPreviews) {
-            previewButton.addClass("active");
-        }
+        createButton("toggle-previews", "Toggle Previews (I)", "Shows/hides a preview of the future orbiting pattern.", function() {
+            Config.drawPreviews = !Config.drawPreviews;
+        }, true, Config.drawPreviews).appendTo(buttonList);
     }
     
     function createScenarios() {
@@ -108,16 +109,13 @@ const Input = (function() {
         let scenarios = ScenarioManager.getScenarioNames();
 
         for(let name of scenarios) {
-            let button = $("<button>").addClass("scenario-option").text(name).click(function() {
+            let description = ScenarioManager.get(name).description;
+            let button = createButton("scenario-option", name, description, function(el) {
                 $(".scenario-option").attr("disabled", false);
-                $(this).attr("disabled", true);
+                el.attr("disabled", true);
                 ScenarioManager.setScenario(name);
             }).appendTo(scenarioList);
             
-            let description = ScenarioManager.get(name).description;
-            if(description) {
-                button.attr("title", description)
-            }
             if(name == ScenarioManager.getCurrentScenario().name) {
                 button.attr("disabled", true);
             }
@@ -129,31 +127,28 @@ const Input = (function() {
         const EDIT = "EDIT";
         const PLAY = "PLAY";
         
-        $("<button>").addClass("mode-switch").text("MODE: VIEW (E)")
-            .click(function() {
-                
-                if(lastModeExit) {
-                    lastModeExit();
+        createButton("mode-switch", "MODE: VIEW (E)", "Switch between View and Edit mode.", function(el) {
+            if(lastModeExit) {
+                lastModeExit();
+            }
+
+            if(Config.mode == VIEW) {
+                Config.mode = EDIT;
+                el.text("MODE: " + EDIT + " (E)");
+                setEditMode();
+                wasPausedByEdit = !Config.isStopped;
+                Config.isStopped = true;
+                lastModeExit = unsetEditMode;
+            } else if(Config.mode = EDIT) {
+                Config.mode = VIEW;
+                el.text("MODE: " + VIEW + " (E)");
+                setViewMode();
+                if(wasPausedByEdit) {
+                    Config.isStopped = false;
                 }
-                
-                if(Config.mode == VIEW) {
-                    Config.mode = EDIT;
-                    $(this).text("MODE: " + EDIT + " (E)");
-                    setEditMode();
-                    wasPausedByEdit = !Config.isStopped;
-                    Config.isStopped = true;
-                    lastModeExit = unsetEditMode;
-                } else if(Config.mode = EDIT) {
-                    Config.mode = VIEW;
-                    $(this).text("MODE: " + VIEW + " (E)");
-                    setViewMode();
-                    if(wasPausedByEdit) {
-                        Config.isStopped = false;
-                    }
-                    lastModeExit = unsetViewMode;
-                }
-            })
-            .appendTo(".header");
+                lastModeExit = unsetViewMode;
+            }
+        }).appendTo(".header");
     }
     
     function setViewMode() {
@@ -259,44 +254,51 @@ const Input = (function() {
         },
         
         createCameraFollowOptions() {
-            $(".camera-follow-options").empty();
-            Input.createCameraFollowOption(center, "Origin").attr("disabled", true);
+            let parent = $(".camera-follow-options").empty();
+            if(!parent.length) {
+                return;
+            }
+            Input.createCameraFollowOption(parent, center, "Origin").attr("disabled", true);
             
             for(let body of universe.allBodies) {
-                let button = Input.createCameraFollowOption(body, body.name);
+                let button = Input.createCameraFollowOption(parent, body, body.name);
                 if(body == cameraTarget) {
                     button.click();
                 }
             }
         },
         
-        createCameraFollowOption(body, text) {
-            return $("<button>").addClass("camera-follow-option").text(text).click(function() {
+        createCameraFollowOption(parent, body, text) {
+            return createButton("camera-follow-option", text, null, function(el) {
                 $(".camera-follow-option").attr("disabled", false);
-                $(this).attr("disabled", true);
+                el.attr("disabled", true);
                 cameraFollow(body);
-            }).appendTo(".camera-follow-options");
+            }).appendTo(parent);
         },
         
         createDrawPathOptions() {
-            $(".draw-paths-options").empty();
-            Input.createDrawPathOption(null, "Origin").attr("disabled", true);
+            let parent = $(".draw-paths-options").empty();
+            if(!parent.length) {
+                return;
+            }
+
+            Input.createDrawPathOption(parent, null, "Origin").attr("disabled", true);
 
             for(let body of universe.allBodies) {
-                let button = Input.createDrawPathOption(body, body.name);
+                let button = Input.createDrawPathOption(parent, body, body.name);
                 if(body == pathAnchor) {
                     button.click();
                 }
             }
         },
         
-        createDrawPathOption(body, text) {
-            return $("<button>").addClass("follow-path-option").text(text).click(function () {
+        createDrawPathOption(parent, body, text) {
+            return createButton("follow-path-option", text, null, function(el) {
                 $(".follow-path-option").attr("disabled", false);
-                $(this).attr("disabled", true);
+                el.attr("disabled", true);
                 pathAnchor = body;
                 Graphics.clearPaths();
-            }).appendTo(".draw-paths-options");
+            }).appendTo(parent);
         },
         
         addOnKey(key, callback) {
