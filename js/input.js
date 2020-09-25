@@ -52,6 +52,26 @@ const Input = (function() {
 
         return button;
     }
+
+    function createSlider(htmlClasses, text, min, max, initialValue, increment, onChange) {
+        let container = $("<div>").addClass(htmlClasses);
+        let description = $("<p>").addClass("slider-description").text(text + ": ").appendTo(container);
+        let number = $("<span>").addClass("slider-value").text(parseFloat(initialValue.toFixed(2))).appendTo(description);
+        let slider = $("<input type='range'>").addClass("slider")
+            .attr("min", min)
+            .attr("max", max)
+            .attr("step", increment || 1)
+            .attr("value", initialValue || 0)
+            .on("input", function() {
+                let val = parseFloat(parseFloat($(this).val()).toFixed(2));
+               number.text(val);
+               onChange(val); 
+            })
+            .appendTo(container);
+        
+        return container;
+    }
+    
     
     function createViewControls() {
         $("<div>").addClass("controls")
