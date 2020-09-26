@@ -1,21 +1,21 @@
 function mouseClicked() {
-    Input.mouseClicked();
+    return Input.mouseClicked();
 }
 
 function mouseDragged() {
-    Input.mouseDragged();
+    return Input.mouseDragged();
 }
 
 function mouseReleased() {
-    Input.mouseReleased();
+    return Input.mouseReleased();
 }
 
 function keyPressed() {
-    Input.onKey(keyCode);
+    return Input.onKey(keyCode);
 }
 
 function mouseWheel() {
-    Input.mouseWheel();
+    return Input.mouseWheel();
 }
 
 const Input = (function() {
@@ -520,6 +520,9 @@ const Input = (function() {
         },
         
         mouseWheel() {
+            if(!Input.isMouseOnScreen()) {
+                return;
+            }
             let zoomIn = event.delta < 0;
             let zoom = Graphics.getZoom();
             let increment = ZOOM_INCREMENT_MULTIPLIER * zoom; 
@@ -539,6 +542,7 @@ const Input = (function() {
             }
 
             Graphics.setZoom(zoom);
+            return false;
         },
 
         /* ACCESSORS */
