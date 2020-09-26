@@ -14,3 +14,12 @@ function uuidv4() {
         return v.toString(16);
     });
 }
+
+function randNum(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+// min/max integer, inclusive
+function randInt(min, max) {
+    return ~~(randNum(min, max + 1));
+}

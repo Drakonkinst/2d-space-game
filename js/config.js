@@ -11,6 +11,7 @@ const Config = (function() {
         // how many ticks ahead should be previewed
         previewDistance: 10000,
         
+        fullScreen: false,
         drawVelocityAcceleration: false,
         drawPaths: true,
         drawPreviews: false,

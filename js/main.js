@@ -15,7 +15,7 @@ ScenarioManager.addScenario("2-Body: Large Central Mass",
         let Blue = universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(2, 0), 50, "blue"));
         let Red = universe.add(new Planetoid("Red", 1.0, Vector.of(0, -110), Vector.of(20, 0), 15, "red"));
         cameraFollow(Blue);
-        pathAnchor = Blue;
+        //pathAnchor = Blue;
     }
 );
 
@@ -117,6 +117,35 @@ ScenarioManager.addScenario("Solar System 2 (WIP)",
     }
 );
 
+ScenarioManager.addScenario("Chaos",
+    function() {
+        universe = new Universe();
+        recalcluateCenter();
+        
+        let howMany = 50;
+        let minRadius = 5;
+        let maxRadius = 50;
+        let maxVelocity = 0.1;
+        let minVelocity = -maxVelocity;
+        let maxPosX = (width / 2) * .9;
+        let maxPosY = (height / 2) * .9;
+        let minPosX = -maxPosX;
+        let minPosY = -maxPosY;
+        let surfaceGravity = 1;
+        
+        for(let i = 0; i < howMany; i++) {
+            let c = color(randInt(0, 255), randInt(0, 255), randInt(0, 255));
+            let velocity = Vector.of(randNum(minVelocity, maxVelocity));
+            let pos = Vector.of(randNum(minPosX, maxPosX), randNum(minPosY, maxPosY));
+            let radius = randNum(minRadius, maxRadius);
+            universe.add(new Planetoid("Body " + (i + 1), surfaceGravity, pos, velocity, radius, c));
+        }
+        
+        cameraFollow(null);
+    }, null,
+    "Some people just want to watch the universe burn."
+);
+
 /* SETUP AND DRAW */
 function setup() {
     recalcluateCenter();
@@ -140,8 +169,13 @@ function draw() {
 
 /* CANVAS */
 function resetCanvas() {
-    const windowWidthRatio = 0.6;
-    const windowHeightRatio = 0.8;
+    let windowWidthRatio = 0.6;
+    let windowHeightRatio = 0.8;
+    
+    if(Config.fullScreen) {
+        windowWidthRatio = 1.0;
+        windowHeightRatio = 1.0;
+    }
     canvas = resizeCanvas(window.innerWidth * windowWidthRatio, window.innerHeight * windowHeightRatio);
     recalcluateCenter();
 }
@@ -153,7 +187,7 @@ function windowResized() {
 /* CAMERA */
 function cameraFollow(obj) {
     if(!obj) {
-        cameraTarget = Vector.of(0, 0);
+        cameraTarget = center;
         return;
     }
     cameraTarget = obj;

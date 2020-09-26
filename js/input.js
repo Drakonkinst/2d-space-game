@@ -20,6 +20,9 @@ function mouseWheel() {
 
 const Input = (function() {
     const SPACE = 32;
+    const ESCAPE = 27;
+    const CTRL = 17;
+    const SHIFT = 16;
     const keyMap = {};
     
     const MIN_SPEED = 1;
@@ -112,7 +115,7 @@ const Input = (function() {
             .append($("<p>").text("Camera Follow:"), $("<div>").addClass("camera-follow-options"))
             .appendTo(".info");
         $("<div>").addClass("draw-paths")
-            .append($("<p>").text("Draw Paths:"), $("<div>").addClass("draw-paths-options"))
+            .append($("<p>").text("Draw Paths Relative To:"), $("<div>").addClass("draw-paths-options"))
             .appendTo(".info");
 
         if(universe) {
@@ -214,7 +217,7 @@ const Input = (function() {
             .append($("<p>").text("Camera Follow:"), $("<div>").addClass("camera-follow-options"))
             .appendTo(".info");
         $("<div>").addClass("draw-paths")
-            .append($("<p>").text("Draw Paths:"), $("<div>").addClass("draw-paths-options"))
+            .append($("<p>").text("Draw Paths Relative To:"), $("<div>").addClass("draw-paths-options"))
             .appendTo(".info");
 
         if(universe) {
@@ -430,6 +433,26 @@ const Input = (function() {
             Input.addOnKey("J", function() {
                 clickButton(".slow-down");
             });
+            Input.addOnKey("F", function() {
+                // fullscreen
+                $("body").toggleClass("fullscreen");
+                Config.fullScreen = !Config.fullScreen;
+                
+                // toggling fullscreen like this causes a few weird issues,
+                // I won't be having this functionality for now
+                //fullscreen(Config.fullScreen);
+                resetCanvas();
+            });
+            Input.addOnKey(ESCAPE, function() {
+                if(Config.fullScreen) {
+                    Input.onKey("F");
+                }
+            });
+            
+            if(Config.fullScreen) {
+                $("body").addClass("fullscreen");
+            }
+            
             debug("Registered " + numKeyBinds + " keybinds");
 
             $("button").click(function () {
@@ -467,6 +490,10 @@ const Input = (function() {
         onKey(keyCode) {
             if(typeof keyCode === "string") {
                 keyCode = keyCode.charCodeAt(0);
+            }
+            
+            if(keyIsDown(SHIFT) || keyIsDown(CTRL)) {
+                return;
             }
             
             if(keyMap.hasOwnProperty(keyCode)) {

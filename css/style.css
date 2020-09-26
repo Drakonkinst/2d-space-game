@@ -1,13 +1,10 @@
-html, body {
-    height: 800px;
-}
-
 body {
   background: #333333;
   font-family: 'Space Mono', monospace;
   color: #f3f3f3;
   margin: 20px;
   display: flex;
+  height: 800px;
 
   /* This centers our sketch horizontally. */
   justify-content: center;
@@ -23,6 +20,16 @@ body {
   width: 300px;
   display: relative;
   margin-right: 25px;
+}
+
+body.fullscreen {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+body.fullscreen .content {
+  display: none;
 }
 
 .tip {

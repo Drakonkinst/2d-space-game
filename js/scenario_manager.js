@@ -49,6 +49,7 @@ const ScenarioManager = (function() {
             Config.updatesPerTick = defaultUpdatesPerTick;
             Config.timestep = defaultTimestep;
             pathAnchor = null;
+            recalcluateCenter();
 
             scene.onStart();
             Input.createCameraFollowOptions();
