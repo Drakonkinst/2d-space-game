@@ -246,6 +246,10 @@ const Input = (function() {
         createButton("toggle-previews", "Toggle Previews (I)", "Shows/hides a preview of the future orbiting pattern.", function() {
             Config.drawPreviews = !Config.drawPreviews;
         }, true, Config.drawPreviews).appendTo(buttonList);
+        
+        createSlider("preview-steps", "Preview Distance", 1, Config.previewDistance, Config.previewDistance, 1, function(val) {
+           Config.previewDistance = val; 
+        }).appendTo(buttonList);
     }
     
     function createBodySelector() {

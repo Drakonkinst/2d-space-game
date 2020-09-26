@@ -157,6 +157,9 @@ const Graphics = (function() {
             
             // draw all paths
             for(let body of virtualBodies) {
+                if(!virtualPathMap.hasOwnProperty(body.host.id)) {
+                    continue;
+                }
                 // final point of path
                 let finalPos = body.position.copy();
                 
