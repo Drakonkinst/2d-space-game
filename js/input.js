@@ -224,12 +224,14 @@ const Input = (function() {
             Input.createCameraFollowOptions();
             Input.createDrawPathOptions();
         }
+        Config.drawPreviews = true;
     }
 
     function unsetEditMode() {
         if(Config.drawPreviews) {
             $(".toggle-previews").click();
         }
+        Config.drawPreviews = false;
     }
     
     function createEditControls() {
@@ -242,10 +244,6 @@ const Input = (function() {
         let buttonList = $(".control-buttons").empty();
 
         createResetButton().appendTo(buttonList);
-
-        createButton("toggle-previews", "Toggle Previews (I)", "Shows/hides a preview of the future orbiting pattern.", function() {
-            Config.drawPreviews = !Config.drawPreviews;
-        }, true, Config.drawPreviews).appendTo(buttonList);
         
         createSlider("preview-steps", "Preview Distance", 1, Config.previewDistance, Config.previewDistance, 1, function(val) {
            Config.previewDistance = val; 
@@ -427,9 +425,6 @@ const Input = (function() {
             });
             Input.addOnKey("E", function() {
                 clickButton(".mode-switch");
-            });
-            Input.addOnKey("I", function() {
-                clickButton(".toggle-previews");
             });
             Input.addOnKey("K", function() {
                 clickButton(".speed-up");
