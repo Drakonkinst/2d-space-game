@@ -474,6 +474,7 @@ const Input = (function() {
                 for(let callback of callbacks) {
                     callback();
                 }
+                return false;
             }
         },
         
@@ -542,6 +543,8 @@ const Input = (function() {
             }
 
             Graphics.setZoom(zoom);
+            
+            // stop scrolling of window
             return false;
         },
 
