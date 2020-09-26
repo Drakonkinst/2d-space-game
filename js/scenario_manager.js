@@ -51,7 +51,6 @@ const ScenarioManager = (function() {
             pathAnchor = null;
 
             scene.onStart();
-            
             Input.createCameraFollowOptions();
             Input.createDrawPathOptions();
             

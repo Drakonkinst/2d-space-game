@@ -21,18 +21,19 @@ function mouseWheel() {
 const Input = (function() {
     const SPACE = 32;
     const keyMap = {};
-    let numKeyBinds = 0;
-    let dragTarget = null;
-    let wasPausedByEdit = false;
-    let lastModeExit = null;
-    let selectedBody = null;
-    let selectedBodyName = null;
     
     const MIN_SPEED = 1;
     const MAX_SPEED = 20;
     const ZOOM_INCREMENT_MULTIPLIER = 0.1;
     const MIN_ZOOM = 0.5;
     const MAX_ZOOM = 250;
+    
+    let numKeyBinds = 0;
+    let dragTarget = null;
+    let wasPausedByEdit = false;
+    let lastModeExit = null;
+    let selectedBody = null;
+    let selectedBodyName = null;
 
     /* HELPERS */
     function createButton(htmlClasses, text, description, onClick, togglesActive, isClicked, clickedText) {
@@ -140,9 +141,8 @@ const Input = (function() {
         }, true, Config.isStopped, "Unpause (SPACE)").appendTo(buttonList);
         
         createButton("toggle-force-velocity", "Toggles Force/Velocity (O)", "Shows/hides force (yellow) and velocity (green) vectors.", function() {
-            Config.drawAcceleration = !Config.drawAcceleration;
-            Config.drawVelocity = !Config.drawVelocity;
-        }, true, Config.drawAcceleration || Config.drawVelocity).appendTo(buttonList);
+            Config.drawVelocityAcceleration = !Config.drawVelocityAcceleration;
+        }, true, Config.drawVelocityAcceleration).appendTo(buttonList);
         
         createButton("toggle-paths", "Toggle Paths (P)", "Shows/hides the paths of each object.", function() {
             Config.drawPaths = !Config.drawPaths;
@@ -329,6 +329,7 @@ const Input = (function() {
                 wasPausedByEdit = !Config.isStopped;
                 Config.isStopped = true;
                 lastModeExit = unsetEditMode;
+            
             } else if(Config.mode = EDIT) {
                 Config.mode = VIEW;
                 el.text("MODE: " + VIEW + " (E)");
@@ -462,6 +463,7 @@ const Input = (function() {
             numKeyBinds++;
         },
         
+        /* EVENTS */
         onKey(keyCode) {
             if(typeof keyCode === "string") {
                 keyCode = keyCode.charCodeAt(0);
@@ -517,19 +519,6 @@ const Input = (function() {
             
         },
         
-        getMousePos() {
-            let pos = new Vector(mouseX, mouseY);
-            let translateOffset;
-            if(cameraTarget.position) {
-                translateOffset = Graphics.getCameraAnchor(cameraTarget.position);
-            } else {
-                translateOffset = Graphics.getCameraAnchor(cameraTarget);
-            }
-            pos.divide(Graphics.getZoom()).subtract(translateOffset);
-            
-            return pos;
-        },
-        
         mouseWheel() {
             let zoomIn = event.delta < 0;
             let zoom = Graphics.getZoom();
@@ -550,6 +539,20 @@ const Input = (function() {
             }
 
             Graphics.setZoom(zoom);
+        },
+
+        /* ACCESSORS */
+        getMousePos() {
+            let pos = new Vector(mouseX, mouseY);
+            let translateOffset;
+            if(cameraTarget.position) {
+                translateOffset = Graphics.getCameraAnchor(cameraTarget.position);
+            } else {
+                translateOffset = Graphics.getCameraAnchor(cameraTarget);
+            }
+            pos.divide(Graphics.getZoom()).subtract(translateOffset);
+
+            return pos;
         },
         
         isMousePressed() {

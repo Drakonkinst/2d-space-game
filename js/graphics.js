@@ -99,6 +99,7 @@ const Graphics = (function() {
             this.drawPlanetoids();
         },
         
+        // simulates all bodies of the universe for a number of ticks
         drawPreview() {
             if(!Config.drawPreviews) {
                 return;
@@ -108,6 +109,7 @@ const Graphics = (function() {
             let virtualPathMap = {};
             let virtualAnchor = null;
             
+            // create virtual bodies + find new path anchor
             for(let planetoid of universe.allBodies) {
                 let virtualBody = new VirtualBody(planetoid);
                 virtualBodies.push(virtualBody);
@@ -116,11 +118,13 @@ const Graphics = (function() {
                 }
             }
             
+            // simulate universe and record paths
             let virtualPathCounter = Config.recordPathInterval;
             for(let i = 0; i < Config.previewDistance; i++) {
                 for(let body of virtualBodies) {
                     body.updateVelocity(virtualBodies, Config.timestep);
                 }
+                
                 for(let body of virtualBodies) {
                     body.updatePosition(Config.timestep);
                     if(virtualPathCounter === 0) {
@@ -151,6 +155,7 @@ const Graphics = (function() {
                 virtualPathCounter--;
             }
             
+            // draw all paths
             for(let body of virtualBodies) {
                 // final point of path
                 let finalPos = body.position.copy();
@@ -182,7 +187,6 @@ const Graphics = (function() {
         },
         
         drawPath(path, finalPoint, initColorInt, maxFade, maxDist) {
-            
             let n = path.length;
             if(!maxDist || !maxFade) {
                 maxDist = 1;
@@ -239,13 +243,13 @@ const Graphics = (function() {
             let d = planetoid.radius * 2;
             ellipse(planetoid.position.x, planetoid.position.y, d, d);
             
-            if(Config.drawVelocity) {
+            if(Config.drawVelocityAcceleration) {
+                // velocity
                 stroke("green");
                 strokeWeight(2 / zoom);
                 drawLine(planetoid.position, planetoid.velocity, 20 / zoom);
-            }
-            
-            if(Config.drawAcceleration) {
+                
+                // acceleration
                 stroke("yellow");
                 strokeWeight(2 / zoom);
                 

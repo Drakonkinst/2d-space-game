@@ -1,5 +1,7 @@
 const Universe = (function() {
-    const GRAVITATIONAL_CONSTANT = 1; //6.67408e-11;
+    const GRAVITATIONAL_CONSTANT = 1;
+    
+    // actual gravitational constant
     //const GRAVITATIONAL_CONSTANT = 6.67408e-11;
     return class Universe {
         getGravitationalConstant() {
