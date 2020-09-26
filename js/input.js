@@ -27,6 +27,12 @@ const Input = (function() {
     let lastModeExit = null;
     let selectedBody = null;
     let selectedBodyName = null;
+    
+    const MIN_SPEED = 1;
+    const MAX_SPEED = 20;
+    const ZOOM_INCREMENT = 0.1;
+    const MIN_ZOOM = 0.5;
+    const MAX_ZOOM = 250;
 
     /* HELPERS */
     function createButton(htmlClasses, text, description, onClick, togglesActive, isClicked, clickedText) {
@@ -128,7 +134,11 @@ const Input = (function() {
         let buttonList = $(".control-buttons").empty();
         
         createResetButton().appendTo(buttonList);
-            
+        
+        createButton("pause-button", "Pause (SPACE)", "Pauses/resumes the simulation", function () {
+            Config.isStopped = !Config.isStopped;
+        }, true, Config.isStopped, "Unpause (SPACE)").appendTo(buttonList);
+        
         createButton("toggle-force-velocity", "Toggles Force/Velocity (O)", "Shows/hides force (yellow) and velocity (green) vectors.", function() {
             Config.drawAcceleration = !Config.drawAcceleration;
             Config.drawVelocity = !Config.drawVelocity;
@@ -138,9 +148,35 @@ const Input = (function() {
             Config.drawPaths = !Config.drawPaths;
         }, true, Config.drawPaths).appendTo(buttonList);
         
-        createButton("pause-button", "Pause (SPACE)", "Pauses/resumes the simulation", function() {
-            Config.isStopped = !Config.isStopped;
-        }, true, Config.isStopped, "Unpause (SPACE)").appendTo(buttonList);
+        let speedUp = createButton("speed-up", "Speed Up (K)", "Speeds up the number of updates per tick.", function(el) {
+            Config.updatesPerTick++;
+            if(Config.updatesPerTick >= MAX_SPEED) {
+                Config.updatesPerTick = MAX_SPEED;
+                el.attr("disabled", true);
+            }
+            
+            if(Config.updatesPerTick > MIN_SPEED) {
+                $(".slow-down").attr("disabled", false);
+            }
+        }).appendTo(buttonList);
+        
+        let slowDown = createButton("slow-down", "Slow Down (J)", "Slows down the number of updates per tick.", function(el) {
+            Config.updatesPerTick--;
+            if(Config.updatesPerTick <= MIN_SPEED) {
+                Config.updatesPerTick = MIN_SPEED;
+                el.attr("disabled", true);
+            }
+            
+            if(Config.updatesPerTick < MAX_SPEED) {
+                $(".speed-up").attr("disabled", false);
+            }
+        }).appendTo(buttonList);
+        
+        if(Config.updatesPerTick <= MIN_SPEED) {
+            slowDown.attr("disabled", true);    
+        } else if(Config.updatesPerTick >= MAX_SPEED) {
+            speedUp.attr("disabled", true);
+        }
     }
     
     function createScenarios() {
@@ -369,23 +405,29 @@ const Input = (function() {
             createModeButtons();
             resetMode();
             
-            Input.addOnKey("O", function () {
+            Input.addOnKey("O", function() {
                 clickButton(".toggle-force-velocity");
             });
-            Input.addOnKey(SPACE, function () {
+            Input.addOnKey(SPACE, function() {
                 clickButton(".pause-button");
             });
-            Input.addOnKey("P", function () {
+            Input.addOnKey("P", function() {
                 clickButton(".toggle-paths");
             });
-            Input.addOnKey("R", function () {
+            Input.addOnKey("R", function() {
                 clickButton(".reset-button");
             });
-            Input.addOnKey("E", function () {
+            Input.addOnKey("E", function() {
                 clickButton(".mode-switch");
             });
-            Input.addOnKey("I", function () {
+            Input.addOnKey("I", function() {
                 clickButton(".toggle-previews");
+            });
+            Input.addOnKey("K", function() {
+                clickButton(".speed-up");
+            });
+            Input.addOnKey("J", function() {
+                clickButton(".slow-down");
             });
             debug("Registered " + numKeyBinds + " keybinds");
 
@@ -488,32 +530,26 @@ const Input = (function() {
             return pos;
         },
         
-        mouseWheel: (function() {
-            const increment = 0.1;
-            const MIN_ZOOM = 0.5;
-            const MAX_ZOOM = 250;
-            
-            return function() {
-                let zoomIn = event.delta < 0;
-                let zoom = Graphics.getZoom();
-                
-                if(zoomIn) {
-                    if(zoom + increment < MAX_ZOOM) {
-                        zoom += increment;
-                    } else {
-                        zoom = MAX_ZOOM;
-                    }
+        mouseWheel() {
+            let zoomIn = event.delta < 0;
+            let zoom = Graphics.getZoom();
+
+            if(zoomIn) {
+                if(zoom + ZOOM_INCREMENT < MAX_ZOOM) {
+                    zoom += ZOOM_INCREMENT;
                 } else {
-                    if(zoom - increment > MIN_ZOOM) {
-                        zoom -= increment;
-                    } else {
-                        zoom = MIN_ZOOM;
-                    }
+                    zoom = MAX_ZOOM;
                 }
-                
-                Graphics.setZoom(zoom);
+            } else {
+                if(zoom - ZOOM_INCREMENT > MIN_ZOOM) {
+                    zoom -= ZOOM_INCREMENT;
+                } else {
+                    zoom = MIN_ZOOM;
+                }
             }
-        })(),
+
+            Graphics.setZoom(zoom);
+        },
         
         isMousePressed() {
             return mouseIsPressed;
