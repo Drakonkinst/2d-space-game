@@ -30,7 +30,7 @@ const Input = (function() {
     
     const MIN_SPEED = 1;
     const MAX_SPEED = 20;
-    const ZOOM_INCREMENT = 0.1;
+    const ZOOM_INCREMENT_MULTIPLIER = 0.1;
     const MIN_ZOOM = 0.5;
     const MAX_ZOOM = 250;
 
@@ -533,16 +533,17 @@ const Input = (function() {
         mouseWheel() {
             let zoomIn = event.delta < 0;
             let zoom = Graphics.getZoom();
+            let increment = ZOOM_INCREMENT_MULTIPLIER * zoom; 
 
             if(zoomIn) {
-                if(zoom + ZOOM_INCREMENT < MAX_ZOOM) {
-                    zoom += ZOOM_INCREMENT;
+                if(zoom + increment < MAX_ZOOM) {
+                    zoom += increment;
                 } else {
                     zoom = MAX_ZOOM;
                 }
             } else {
-                if(zoom - ZOOM_INCREMENT > MIN_ZOOM) {
-                    zoom -= ZOOM_INCREMENT;
+                if(zoom - increment > MIN_ZOOM) {
+                    zoom -= increment;
                 } else {
                     zoom = MIN_ZOOM;
                 }
