@@ -42,8 +42,7 @@ ScenarioManager.addScenario("3-Body: Large Central Mass 2",
     function () {
         universe = new Universe();
         universe.add(new Planetoid("Blue", 15.0, Vector.of(0, 0), Vector.of(1, 0), 50, "blue"));
-        //universe.add(new Planetoid("Red", 1.0, Vector.of(0, -150), Vector.of(16.2, 0), 15, "red"));
-        universe.add(new Planetoid("Gray", 1.0, Vector.of(0, 200), Vector.of(15.6, 0), 20, "gray"));
+        universe.add(new Planetoid("Red", 1.0, Vector.of(0, 200), Vector.of(15.6, 0), 20, "gray"));
         universe.add(new Planetoid("Gray", 1.0, Vector.of(0, -200), Vector.of(-13.6, 0), 20, "gray"));
         cameraFollow(universe.allBodies[0]);
     }
