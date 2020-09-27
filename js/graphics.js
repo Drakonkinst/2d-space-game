@@ -1,4 +1,5 @@
 const Graphics = (function() {
+    /* HELPERS */
     function toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
@@ -87,7 +88,6 @@ const Graphics = (function() {
             } else {
                 translateOffset = Graphics.getCameraAnchor(cameraTarget);
             }
-
             translate(translateOffset.x, translateOffset.y);
             
             if(pathCounter == 0) {
@@ -234,33 +234,63 @@ const Graphics = (function() {
                 return;
             }
             
+            let pos = planetoid.position;
+            
             noStroke();
             
+            // highlight if selected in edit mode
             if(Input.getSelectedBody() == planetoid && Config.mode == "EDIT") {
+                // if dragging along axis, show axis
+                stroke("white");
+                strokeWeight(1 / zoom);
+                const distance = 10000;
+                if(Input.shouldShowXAxis()) {
+                    line(pos.x - distance, pos.y, pos.x + distance, pos.y);
+                } else if(Input.shouldShowYAxis()) {
+                    line(pos.x, pos.y - distance, pos.x, pos.y + distance);
+                }
+                noStroke();
+                
+                // highlight
                 fill("yellow");
                 let highlight = planetoid.radius * 2 + 5 / zoom;
-                ellipse(planetoid.position.x, planetoid.position.y, highlight, highlight);
+                ellipse(pos.x, pos.y, highlight, highlight);
+                
+                // show coords relative to camera anchor (center)
+                // TODO should it be relative to center instead?
+                let anchor = cameraTarget;
+                if(cameraTarget.position) {
+                    anchor = cameraTarget.position;
+                }
+                let coords = pos.copy().subtract(anchor);
+                textSize(16 / zoom);
+                fill("white");
+                let str = "(" + coords.x.toFixed(2) + ", " + coords.y.toFixed(2) + ")";
+                text(str, pos.x + 75 / zoom, pos.y - 50 / zoom);
             }
             
+            // planet body
             fill(planetoid.color);
             let d = planetoid.radius * 2;
-            ellipse(planetoid.position.x, planetoid.position.y, d, d);
+            ellipse(pos.x, pos.y, d, d);
             
+            // velocity and acceleration
             if(Config.drawVelocityAcceleration) {
                 // velocity
                 stroke("green");
                 strokeWeight(2 / zoom);
-                drawLine(planetoid.position, planetoid.velocity, 20 / zoom);
+                drawLine(pos, planetoid.velocity, 20 / zoom);
                 
-                // acceleration
+                // acceleration (from each source)
                 stroke("yellow");
                 strokeWeight(2 / zoom);
                 
                 for(let accel of planetoid.accelerationsDisplay) {
-                    drawLine(planetoid.position, accel, 1000 / zoom);
+                    drawLine(pos, accel, 1000 / zoom);
                 }
             }
             
+            // record path
             if(pathCounter === 0 && !Config.isStopped) {
                 if(!paths.hasOwnProperty(planetoid.id)) {
                     paths[planetoid.id] = [];

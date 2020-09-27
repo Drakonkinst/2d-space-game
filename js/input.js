@@ -10,6 +10,10 @@ function mouseReleased() {
     return Input.mouseReleased();
 }
 
+function mousePressed() {
+    return Input.mousePressed();
+}
+
 function keyPressed() {
     return Input.onKey(keyCode);
 }
@@ -35,8 +39,13 @@ const Input = (function() {
     let dragTarget = null;
     let wasPausedByEdit = false;
     let lastModeExit = null;
+    
     let selectedBody = null;
     let selectedBodyName = null;
+    let isDragging = false;
+    let followingCopy = null;
+    let moveAlongX = false;
+    let moveAlongY = false;
 
     /* HELPERS */
     function createButton(htmlClasses, text, description, onClick, togglesActive, isClicked, clickedText) {
@@ -228,9 +237,6 @@ const Input = (function() {
     }
 
     function unsetEditMode() {
-        if(Config.drawPreviews) {
-            $(".toggle-previews").click();
-        }
         Config.drawPreviews = false;
     }
     
@@ -245,8 +251,12 @@ const Input = (function() {
 
         createResetButton().appendTo(buttonList);
         
-        createSlider("preview-steps", "Preview Distance", 1, Config.previewDistance, Config.previewDistance, 1, function(val) {
+        createSlider("preview-steps", "Preview Distance", 1, 20000, Config.previewDistance, 1, function(val) {
            Config.previewDistance = val; 
+        }).appendTo(buttonList);
+        
+        createSlider("preview-steps", "Gravitational Constant", 0, 1.5, universe.G, 0.01, function (val) {
+            universe.G = val;
         }).appendTo(buttonList);
     }
     
@@ -515,35 +525,81 @@ const Input = (function() {
                 let toSelect = null;
                 for(let body of universe.allBodies) {
                     if(body instanceof Planetoid && body.pointOnPlanetoid(mousePos)) {
-                        //dragTarget = body;
+                        dragTarget = body;
                         toSelect = body;
                     }
                 }
                 selectBody(toSelect);
+                if(cameraTarget == toSelect) {
+                    cameraFollow(toSelect.position.copy());
+                    followingCopy = toSelect;
+                }
+                
+                if(isDragging) {
+                    if(followingCopy != null) {
+                        cameraFollow(followingCopy);
+                        followingCopy = null;
+                    }
+                    dragTarget = null;
+                    isDragging = false;
+                    moveAlongX = false;
+                    moveAlongY = false;
+                }
             }
         },
         
         mouseDragged() {
-            if(Config.editMode) {
-                if(!Config.isStopped) {
-                    $(".pause-button").click();
-                }
+            if(!this.isMouseOnScreen()) {
+                return;
+            }
+            if(Config.mode == "EDIT") {
                 if(dragTarget != null) {
-                    // TODO move virtual target
-                    //dragTarget.position = Input.getMousePos();
+                    isDragging = true;
+
+                    let delta = Input.getMousePos().subtract(dragTarget.position);
+                    if(keyIsDown(SHIFT)) {
+                        if(!moveAlongX && !moveAlongY) {
+                            if(Math.abs(delta.y) > Math.abs(delta.x)) {
+                                moveAlongY = true;
+                            } else {
+                                moveAlongX = true;
+                            }
+                        }
+                        
+                        if(moveAlongX) {
+                            // move along X
+                            dragTarget.position.add(Vector.of(delta.x, 0));
+                        } else {
+                            // move along y
+                            dragTarget.position.add(Vector.of(0, delta.y));
+                        }
+                    } else {
+                        dragTarget.position.add(delta);
+                        moveAlongX = false;
+                        moveAlongY = false;
+                    }
                 }
             }
         },
         
         mouseReleased() {
-            if(Config.isStopped) {
-                //$(".pause-button").click();
-            }
-            if(dragTarget != null) {
-                dragTarget.position = Input.getMousePos();
-                dragTarget = null;
+            
+        },
+        
+        mousePressed() {
+            if(!this.isMouseOnScreen()) {
+                return;
             }
             
+            // if still clicking on the selected body, continue dragging
+            let mousePos = Input.getMousePos();
+            if(selectedBody instanceof Planetoid && selectedBody.pointOnPlanetoid(mousePos)) {
+                dragTarget = selectedBody;
+                if(cameraTarget == selectedBody) {
+                    cameraFollow(selectedBody.position.copy());
+                    followingCopy = selectedBody;
+                }
+            }
         },
         
         mouseWheel() {
@@ -599,6 +655,14 @@ const Input = (function() {
         
         getSelectedBody() {
             return selectedBody;
+        },
+        
+        shouldShowXAxis() {
+            return moveAlongX;
+        },
+        
+        shouldShowYAxis() {
+            return moveAlongY;
         }
     };
 })();

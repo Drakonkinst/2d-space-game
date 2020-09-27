@@ -41,6 +41,7 @@ const CelestialBody = (function() {
     };
 })();
 
+// wraps a CelestialBody to simulate its movement
 const VirtualBody = (function () {
     return class VirtualBody {
         constructor(body) {
