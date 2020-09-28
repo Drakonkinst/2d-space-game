@@ -115,3 +115,7 @@ button:disabled {
 .body-selector-title {
   margin-top: 0;
 }
+
+.tip-container {
+  height: 60px;
+}

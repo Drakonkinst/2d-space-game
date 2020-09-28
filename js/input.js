@@ -66,6 +66,7 @@ const Input = (function() {
             }
             
             // prevents button clicks from firing the mouseClicked() event
+            $(this).blur();
             return false;
         });
 
@@ -463,10 +464,35 @@ const Input = (function() {
             }
             
             debug("Registered " + numKeyBinds + " keybinds");
-
-            $("button").click(function () {
-                $(this).blur();
-            });
+            
+            // Tips
+            const Tips = [
+                "Some button have tooltips if you hover over them",
+                "Scroll to zoom in/out",
+                "Use arrow keys to fine-tune sliders in Edit mode",
+                "You can click on planets to select them in Edit mode",
+                "Press F for fullscreen mode",
+                "Press SHIFT while moving a planet in Edit mode to lock it to a certain axis"
+            ];
+            let currentTip = 0;
+            
+            function updateTip() {
+                let text = Tips[currentTip];
+                let container = $(".tip-container").empty();
+                $("<p>").addClass("tip").text("* " + text + ".").appendTo(container);
+            }
+            
+            createButton("prev-tip", "Prev Tip", "Displays the previous tip", function() {
+                currentTip = (currentTip + Tips.length - 1) % Tips.length;
+                updateTip();
+            }).appendTo(".tips");
+            
+            createButton("next-tip", "Next Tip", "Displays the next tip.", function() {
+                currentTip = (currentTip + 1) % Tips.length;
+                updateTip();
+            }).appendTo(".tips");
+            
+            updateTip();
         },
         
         update() {
@@ -603,7 +629,7 @@ const Input = (function() {
         },
         
         mouseWheel() {
-            if(!Input.isMouseOnScreen()) {
+            if(!Input.isMouseOnScreen() || isKeyDown(CTRL)) {
                 return;
             }
             let zoomIn = event.delta < 0;
