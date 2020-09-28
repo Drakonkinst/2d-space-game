@@ -25,7 +25,6 @@ function mouseWheel() {
 const Input = (function() {
     const SPACE = 32;
     const ESCAPE = 27;
-    const CTRL = 17;
     const SHIFT = 16;
     const keyMap = {};
     
@@ -527,7 +526,7 @@ const Input = (function() {
                 keyCode = keyCode.charCodeAt(0);
             }
             
-            if(keyIsDown(SHIFT) || keyIsDown(CTRL)) {
+            if(keyIsDown(SHIFT) || keyIsDown(CONTROL)) {
                 return;
             }
             
@@ -629,7 +628,7 @@ const Input = (function() {
         },
         
         mouseWheel() {
-            if(!Input.isMouseOnScreen() || isKeyDown(CTRL)) {
+            if(!Input.isMouseOnScreen() || keyIsDown(CONTROL)) {
                 return;
             }
             let zoomIn = event.delta < 0;
